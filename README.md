@@ -39,46 +39,67 @@ Authors: Ava Batson-Perez, Cale Bible, Ismael Eudave, Zac Freeman, Aiden Isch, L
 
 ## Project Status 
 
-This is an ongoing project in development 
+This is an ongoing project in development.
 
 ## Roadmap
 
-[X] Phase 1 
+- [x] Phase 1 
+	- [ ] Build Sign-up/Login flow 
+	- [ ] Set up tables/coolections in back end 
+	- [ ] Create task that sends strings of text to LLM 
+	- [ ] Create UI in Figma 
+- [ ] Phase 2 
+	- [ ] Finish task features (create, read, update, delete) 
+	- [ ] Install a calendar library and connect to Events database 
+	- [ ] Build a chatbox and bubble window 
+	- [ ] Ensure after event creation, pops into calendar without page refresh 
+- [ ] Phase 3 
+	- [ ] Create a system prompt for user input 
+	- [ ] Take the prompt output and call functions 
+	- [ ] Write a function that checks event overlap 
+	- [ ] Chatbox user feedback 
+- [ ] Phase 4 
+	- [ ] Fix Calendar UI for smaller screens 
+	- [ ] Create Edge Case Handling for AI chatbot 
+	- [ ] Write the final documentation and prepare presentation 
+	- [ ] Deploy the platform 
 
-	[ ] Build Sign-up/Login flow 
+## Development Guidelines
 
-	[ ] Set up tables/coolections in back end 
+### Code Quality and Readability
 
-	[ ] Create task that sends strings of text to LLM 
+- Code must follow proper syntax and be free of runtime errors.
+- Code must be clearly commented where logic is non-trivial.
+- Naming conventions must be consistent (camelCase for variables and functions,
+- PascalCase for components/classes).
 
-	[ ] Create UI in Figma 
+### Clear and Meaningful Naming
 
-[ ] Phase 2 
+- Variable and function names must be descriptive, concise, and relevant to their purpose.
+- Names should avoid ambiguity and not be overly similar to existing identifiers.
+- Underscores may be used only where appropriate and consistently.
 
-	[ ] Finish task features (create, read, update, delete) 
+### Feature Completeness
 
-	[ ] Install a calendar library and connect to Events database 
+- Each commit must implement a clearly defined piece of functionality related to an assigned feature.
+- Partial or placeholder functionality must be explicitly labeled as such.
 
-	[ ] Build a chatbox and bubble window 
+### UI & User Interaction (If Applicable)
 
-	[ ] Ensure after event creation, pops into calendar without page refresh 
+- User-facing features must include a visible and usable UI component.
+- UI elements must respond correctly to user input without causing crashes or inconsistent states.
 
-[ ] Phase 3 
+### Independence & Modularity
 
-	[ ] Create a system prompt for user input 
+- Code should not break or modify another team member’s feature without coordination.
+- Feature logic should be modular and reasonably self-contained.
 
-	[ ] Take the prompt output and call functions 
+### Testing & Stability
 
-	[ ] Write a function that checks event overlap 
+- Code must compile/run successfully before being merged.
+- No new warnings, errors, or regressions should be introduced.
 
-	[ ] Chatbox user feedback 
+### Documentation
 
-[ ] Phase 4 
-
-	[ ] Fix Calendar UI for smaller screens 
-
-	[ ] Create Edge Case Handling for AI chatbot 
-
-	[ ] Write the final documentation and prepare presentation 
-
-	[ ] Deploy the platform 
+- Any new feature or major change must be briefly documented in the README or relevant documentation file.
+- Assumptions, limitations, or dependencies must be clearly noted.
