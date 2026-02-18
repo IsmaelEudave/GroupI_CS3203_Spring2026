@@ -43,7 +43,7 @@ This is an ongoing project in development.
 
 ## Roadmap
 
-- [x] Phase 1 
+- [x] Phase 1 (Current stage)
 	- [ ] Build Sign-up/Login flow 
 	- [ ] Set up tables/coolections in back end 
 	- [ ] Create task that sends strings of text to LLM 
