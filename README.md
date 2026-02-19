@@ -4,9 +4,9 @@ A collaborative group management platform designed to streamline task coordinati
 
 ## Description/Usage
 
-TaskLU is a group management application built to help teams stay organized, accountable, and aligned. This platform centralizes task management, role assignment, progress tracking, and meeting scheduling in one place, reducing communication errors and missed deadlines. 
+TaskLU is an individual project management application built to help solo users stay organized, accountable, and focused. This platform centralizes personal task management, priority setting, and progress tracking in a single interface, reducing the risk of overlooked details and missed deadlines.
 
-This application addresses common collaboration issues such as unclear responsibilities, fragmented task tracking, and inefficient meeting coordination. By combining structured task workflows with a shared availability calendar, TaskLU enables teams to plan effectively, monitor progress in real time, and make informed scheduling decisions. This makes it especially useful for student project teams, academic groups, and small collaborative teams. 
+The application addresses common personal productivity challenges such as scattered planning, fragmented task tracking, and inefficient time management. By combining structured individual workflows with a dedicated availability calendar, TaskLU enables a user to plan effectively, monitor personal milestones in real time, and make informed scheduling decisions. This makes it an essential tool for individual students, freelancers, and independent professionals seeking to master their own workflows.
 
 ## Getting Started
 
