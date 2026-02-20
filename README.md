@@ -44,25 +44,37 @@ This is an ongoing project in development.
 ## Roadmap
 
 - [x] Phase 1 (Current stage)
-	- [ ] Build Sign-up/Login flow 
-	- [ ] Set up tables/coolections in back end 
-	- [ ] Create task that sends strings of text to LLM 
-	- [ ] Create UI in Figma 
+	- [ ] TaskCreator: Foundation - Landen Mowdy
+	- [ ] Communication Feature: Create infrastructure for sharing - Cale Bible
+	- [ ] Calendar: Foundation - Aiden Isch
+	- [ ] FocusMode: Implement Focus Mode UI Screen - Ava Batson-Perez
+	- [ ] KanBan: Workflow Setup & Task Creation - Ismael Eudave
+	- [ ] Task Insights Dashboard - Core Metrics Overview - Zac Freeman
+	- [ ] AI Task Progress Summary: Research - Owen Whitaker
 - [ ] Phase 2 
-	- [ ] Finish task features (create, read, update, delete) 
-	- [ ] Install a calendar library and connect to Events database 
-	- [ ] Build a chatbox and bubble window 
-	- [ ] Ensure after event creation, pops into calendar without page refresh 
+	- [ ] TaskCreator: UI/UX & Conflict Detection - Landen Mowdy
+	- [ ] Communication Feature: The "Transfer" Action - Cale Bible
+	- [ ] Calendar: Functionality - Aiden Isch
+	- [ ] FocusMode: Build Focus Timer Controls - Ava Batson-Perez
+	- [ ] KanBan: Academic Status & Project Logic - Ismael Eudave
+	- [ ] Task Insights Dashboard - Member & Deadline Insights - Zac Freeman
+	- [ ] AI Task Progress Summary: Ability to Query Model - Owen Whitaker
 - [ ] Phase 3 
-	- [ ] Create a system prompt for user input 
-	- [ ] Take the prompt output and call functions 
-	- [ ] Write a function that checks event overlap 
-	- [ ] Chatbox user feedback 
+	- [ ] TaskCreator: UI Cleanup & Reoccuring Tasks - Landen Mowdy
+	- [ ] Communication Feature: The "Inbox" View - Cale Bible
+	- [ ] Calendar: Fixing up UI and making things look nice - Aiden Isch
+	- [ ] FocusMode: Add Configurable Focus Duration - Ava Batson-Perez
+	- [ ] KanBan: Visual Progress & Team Assignments - Ismael Eudave
+	- [ ] Task Insights Dashboard: Visual Charts - Zac Freeman
+	- [ ] AI Task Progress Summary: Expose Model to Project - Owen Whitaker
 - [ ] Phase 4 
-	- [ ] Fix Calendar UI for smaller screens 
-	- [ ] Create Edge Case Handling for AI chatbot 
-	- [ ] Write the final documentation and prepare presentation 
-	- [ ] Deploy the platform 
+	- [ ] TaskCreator: Smart Features & Cleanup - Landen Mowdy
+	- [ ] Communication Feature: The "Confirmation" Feedback - Cale Bible
+	- [ ] Calendar: Bug Fixes and Final Touches - Aiden Isch
+	- [ ] FocusMode: Implement Local State Management for Focus Sessions - Ava Batson-Perez
+	- [ ] KanBan: Final Handover - Ismael Eudave
+	- [ ] Task Insights Dashboard: Interactive Filtering & UI Polish - Zac Freeman
+	- [ ] AI Task Progress Summary: Accurate Summarization - Owen Whitaker
 
 ## Development Guidelines
 
