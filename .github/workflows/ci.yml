@@ -8,5 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run something
-        run: echo "GitHub Actions is running!"
+      - name: Validate hello world page
+        run: |
+          test -f docs/index.html
+          echo "CI passed: docs/index.html exists."

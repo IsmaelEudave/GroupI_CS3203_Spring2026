@@ -12,6 +12,17 @@ The application addresses common personal productivity challenges such as scatte
 
 This project is currently in development. Stay tuned for updates! 
 
+## GitHub Pages Deployment
+
+This repo includes a GitHub Actions workflow that deploys `docs/index.html` to GitHub Pages on every push to `main`.
+
+To enable it in GitHub:
+
+1. Open repository **Settings**.
+2. Go to **Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Push to `main` and wait for the `Deploy Hello Page` workflow to complete.
+
 ### Dependencies
 
 - A modern web browser
