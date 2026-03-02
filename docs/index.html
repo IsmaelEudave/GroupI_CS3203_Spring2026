@@ -12,7 +12,30 @@
     </style>
   </head>
   <body>
-    <h1>Hello World</h1>
+    <h1>Hello Group I</h1>
     <p>TaskLU GitHub Pages pipeline is live.</p>
+    <button onclick="toggleNames()">Show Names</button>
+
+<ul id="names-list" style="display: none;">
+  <li style="color: #e63946;">Owen</li>
+<li style="color: rgb(35, 137, 37);">Aiden</li>
+<li style="color: #285650;">Cale</li>
+<li style="color: #e63946;">Ava</li>
+<li style="color: rgb(183, 226, 10);">Zac</li>
+<li style="color: #b91796;">Ismael</li>
+<li style="color: #000000;">Landen</li>
+<li style="color: rgb(137, 101, 35);">Akshay</li>
+</ul>
+
+<script>
+  function toggleNames() {
+    const list = document.getElementById('names-list');
+    const button = document.querySelector('button');
+    const isHidden = list.style.display === 'none';
+
+    list.style.display = isHidden ? 'block' : 'none';
+    button.textContent = isHidden ? 'Hide Names' : 'Show Names';
+  }
+</script>
   </body>
 </html>
