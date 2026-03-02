@@ -1,41 +1,92 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaskLU</title>
+    
+    <title>TaskLU - Team Dashboard</title>
+
     <style>
-      body {
-        margin: 2rem;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      }
+        /* CONFIG: General page appearance */
+        body {
+            margin: 2rem;
+            line-height: 1.6;
+            background-color: #f8f9fa; /* Light gray background */
+            color: #333; /* Dark gray text */
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        }
+
+        h1 {
+            color: #2a9d8f; /* Brand color for the heading */
+        }
+
+        /* CONFIG: Button styling */
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #264653;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2a9d8f;
+        }
+
+        /* CONFIG: Team list layout */
+        #names-list {
+            margin-top: 1.5rem;
+            padding-left: 0;
+            list-style-type: none; /* Removes default bullet points */
+        }
+
+        /* CONFIG: Reusable class for team members */
+        .member-item {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
     </style>
-  </head>
-  <body>
-    <h1>Who is bro?</h1>
+</head>
+
+<body>
+
+    <h1>Akshay is a valued member of this team</h1>
+    
     <p>TaskLU GitHub Pages pipeline is live.</p>
+
     <button onclick="toggleNames()">Show Names</button>
 
-<ul id="names-list" style="display: none;">
-  <li style="color: #e63946;">Owen</li>
-<li style="color: rgb(35, 137, 37);">Aiden</li>
-<li style="color: #285650;">Cale</li>
-<li style="color: #e63946;">Ava</li>
-<li style="color: rgb(183, 226, 10);">Zac</li>
-<li style="color: #b91796;">Ismael</li>
-<li style="color: #1d7d7b;">Landen</li>
-<li style="color: rgb(137, 101, 35);">Akshay</li>
-</ul>
+    <ul id="names-list" style="display: none;">
+        <li class="member-item" style="color: #e63946;">Owen</li>
+        <li class="member-item" style="color: rgb(35, 137, 37);">Aiden</li>
+        <li class="member-item" style="color: #285650;">Cale</li>
+        <li class="member-item" style="color: #e63946;">Ava</li>
+        <li class="member-item" style="color: rgb(183, 226, 10);">Zac</li>
+        <li class="member-item" style="color: #b91796;">Ismael</li>
+        <li class="member-item" style="color: #000000;">Landen</li>
+        <li class="member-item" style="color: rgb(137, 101, 35);">Akshay</li>
+    </ul>
 
-<script>
-  function toggleNames() {
-    const list = document.getElementById('names-list');
-    const button = document.querySelector('button');
-    const isHidden = list.style.display === 'none';
+    <script>
+        /**
+         * CONFIG: This function controls the visibility of the list.
+         * You can change the button text here.
+         */
+        function toggleNames() {
+            const list = document.getElementById('names-list');
+            const button = document.querySelector('button');
+            const isHidden = list.style.display === 'none';
 
-    list.style.display = isHidden ? 'block' : 'none';
-    button.textContent = isHidden ? 'Hide Names' : 'Show Names';
-  }
-</script>
-  </body>
+            // Switch display state
+            list.style.display = isHidden ? 'block' : 'none';
+            
+            // Switch button label
+            button.textContent = isHidden ? 'Hide Names' : 'Show Names';
+        }
+    </script>
+
+</body>
 </html>
