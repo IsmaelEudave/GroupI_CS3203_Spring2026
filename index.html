@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Task Manager</title>
+    <meta name="description" content="A premium, modern task manager application.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Task<span class="highlight">Flow</span></h1>
+            <p class="subtitle">Organize your day with elegance.</p>
+        </header>
+
+        <main class="main-content">
+            <section class="task-input-section">
+                <form id="task-form">
+                    <div class="input-group">
+                        <input type="text" id="task-input" placeholder="What needs to be done?" autocomplete="off" required>
+                        <button type="submit" id="add-task-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="task-list-section">
+                <div class="list-header">
+                    <h2>Your Tasks</h2>
+                    <span id="task-count" class="task-count">0 tasks</span>
+                </div>
+                <ul id="task-list" class="task-list">
+                    <!-- Tasks will be injected here via JavaScript -->
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Empty State Template (Hidden by default, cloned in JS) -->
+    <template id="empty-state-template">
+        <div class="empty-state fade-in">
+            <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <h3>All caught up!</h3>
+            <p>Add a new task above to get started.</p>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+</body>
+</html>
