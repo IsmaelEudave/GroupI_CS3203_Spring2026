@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskLU - Focus Mode Timer</title>
+    <link rel="stylesheet" href="../css/focus-mode.css" />
+</head>
+<body>
+    <main class="container">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+
+        <h1>Focus Mode Timer</h1>
+        <p class="subtitle">Choose a duration and start a focus session.</p>
+
+        <section class="focus-card">
+            <label>Session Duration</label>
+
+            <div class="duration-inputs">
+                <div class="input-group">
+                    <label for="hoursInput">Hours</label>
+                    <input type="number" id="hoursInput" min="0" max="23" value="0" />
+                </div>
+
+                <div class="input-group">
+                    <label for="minutesInput">Minutes</label>
+                    <input type="number" id="minutesInput" min="0" max="59" value="25" />
+                </div>
+            </div>
+
+            <div id="timerDisplay">25:00</div>
+
+            <div class="button-group">
+                <button id="startBtn">Start</button>
+                <button id="pauseBtn" disabled>Pause</button>
+                <button id="resumeBtn" disabled>Resume</button>
+                <button id="endBtn" disabled>End</button>
+            </div>
+
+            <p id="sessionStatus">Ready to start.</p>
+        </section>
+    </main>
+
+    <script src="../js/focus-mode.js"></script>
+</body>
+</html>
