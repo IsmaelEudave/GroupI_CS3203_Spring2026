@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Insights Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .dashboard-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .metric-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .metric-card h2 {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <h1>Task Insights Dashboard</h1>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h2>Total Tasks</h2>
+        <div class="metric-value" id="totalTasks">0</div>
+      </div>
+
+      <div class="metric-card">
+        <h2>Completed Tasks</h2>
+        <div class="metric-value" id="completedTasks">0</div>
+      </div>
+
+      <div class="metric-card">
+        <h2>Tasks In Progress</h2>
+        <div class="metric-value" id="inProgressTasks">0</div>
+      </div>
+
+      <div class="metric-card">
+        <h2>Tasks Not Started</h2>
+        <div class="metric-value" id="notStartedTasks">0</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tasks = [
+      { title: "Design homepage", status: "completed" },
+      { title: "Build login page", status: "in progress" },
+      { title: "Create recipe form", status: "not started" },
+      { title: "Set up database", status: "completed" },
+      { title: "Add dashboard page", status: "in progress" },
+      { title: "Test navigation", status: "not started" }
+    ];
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(task => task.status === "completed").length;
+    const inProgressTasks = tasks.filter(task => task.status === "in progress").length;
+    const notStartedTasks = tasks.filter(task => task.status === "not started").length;
+
+    document.getElementById("totalTasks").textContent = totalTasks;
+    document.getElementById("completedTasks").textContent = completedTasks;
+    document.getElementById("inProgressTasks").textContent = inProgressTasks;
+    document.getElementById("notStartedTasks").textContent = notStartedTasks;
+  </script>
+</body>
+</html>
