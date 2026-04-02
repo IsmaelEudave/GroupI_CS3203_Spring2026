@@ -1,12 +1,10 @@
 # Running the KanbanBoard Unit Tests
 
-No coding experience needed — just follow each step in order.
+Follow each step in order.
 
 ---
 
 ## Step 1 — Install Node.js
-
-Node.js is a free tool that lets your computer run the tests.
 
 1. Go to [https://nodejs.org](https://nodejs.org)
 2. Click the big **"LTS"** download button (LTS = recommended, stable version)
@@ -17,8 +15,6 @@ Node.js is a free tool that lets your computer run the tests.
 
 ## Step 2 — Open the Terminal
 
-The terminal is a text-based window where you type commands to control your computer.
-
 **On Mac:**
 1. Press **Command (⌘) + Space** to open Spotlight Search
 2. Type `Terminal` and press **Enter**
@@ -27,13 +23,13 @@ The terminal is a text-based window where you type commands to control your comp
 1. Press the **Windows key**
 2. Type `cmd` and press **Enter**
 
-A black or white window will open. Don't worry — you'll just be copying and pasting the commands below into it.
+A black or white window will open. You'll just be copying and pasting the commands below into it.
 
 ---
 
 ## Step 3 — Create the Project
 
-Copy and paste this command into the terminal, then press **Enter**. This sets up a fresh project with everything pre-installed. It may take 1–2 minutes.
+Copy and paste this command into the terminal, then press **Enter**. This sets up a fresh project with everything pre-installed.
 
 ```
 npx create-react-app my-app
