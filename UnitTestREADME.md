@@ -1,7 +1,5 @@
 # Running the KanbanBoard Unit Tests
 
-Follow each step in order.
-
 ---
 
 ## Step 1 — Install Node.js
@@ -29,7 +27,7 @@ A black or white window will open. You'll just be copying and pasting the comman
 
 ## Step 3 — Create the Project
 
-Copy and paste this command into the terminal, then press **Enter**. This sets up a fresh project with everything pre-installed.
+Copy and paste this command into the terminal, then press **Enter**. This sets up a fresh project with everything pre-installed. It may take 1–2 minutes.
 
 ```
 npx create-react-app my-app
@@ -43,29 +41,41 @@ cd my-app
 
 ---
 
-## Step 4 — Add the Test Files
- 
+## Step 4 — Update a Testing Library
+
+Create React App comes with an older version of one testing tool that needs to be updated. Paste this command and press **Enter**:
+
+```
+npm install --save-dev @testing-library/user-event@latest
+```
+
+This only takes a few seconds.
+
+---
+
+## Step 5 — Add the Test Files
+
 First, open the `src` folder on your computer using the terminal. Paste the command for your system and press **Enter**:
- 
+
 **Mac:**
 ```
 open src
 ```
- 
+
 **Windows:**
 ```
 explorer src
 ```
- 
+
 This will pop open the `src` folder directly in your file explorer. Now drag and drop (or copy and paste) **`KanbanBoard.jsx`** and **`KanbanBoard.test.jsx`** into that window.
- 
+
 When done, the `src` folder should contain (among other files already there):
 - `KanbanBoard.jsx`
 - `KanbanBoard.test.jsx`
 
 ---
 
-## Step 5 — Run the Tests
+## Step 6 — Run the Tests
 
 Go back to your terminal window and paste this command, then press **Enter**:
 
@@ -86,7 +96,7 @@ Tests: 15 passed, 15 total
 ## Something Went Wrong?
 
 **"npx is not recognized" or "npm is not found"**
-Node.js didn't install correctly. Go back to Step 1, re-run the installer, restart your computer, and try again.
+Node.js didn't install correctly. Go back to Step 1, re-run the installer, then close and reopen the terminal and try again.
 
 **The terminal says "my-app already exists"**
 The folder was already created from a previous attempt. Run this instead to delete it and start fresh:
@@ -96,8 +106,3 @@ The folder was already created from a previous attempt. Run this instead to dele
 
 **Tests fail or show red errors**
 Double-check that both files are inside the `src` folder (not inside any other folder within `src`, just directly inside it).
-npm list @testing-library/user-event
-```
-
-**Unexpected token / JSX syntax error**
-Ensure your project supports JSX (Create React App does by default). If you're using a custom setup, confirm Babel is configured to handle `.jsx` files.
