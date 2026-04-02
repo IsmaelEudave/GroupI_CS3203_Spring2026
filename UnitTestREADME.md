@@ -44,14 +44,21 @@ cd my-app
 ---
 
 ## Step 4 — Add the Test Files
-
-This is the step where you place the two files into the right folder on your computer.
-
-1. Open your **file explorer** (called **Finder** on Mac, **File Explorer** on Windows)
-2. Navigate to your home folder and look for a new folder called **`my-app`** — this was created in Step 3
-3. Open `my-app`, then open the folder inside it called **`src`**
-4. Copy **`KanbanBoard.jsx`** and **`KanbanBoard.test.jsx`** into this `src` folder
-
+ 
+First, open the `src` folder on your computer using the terminal. Paste the command for your system and press **Enter**:
+ 
+**Mac:**
+```
+open src
+```
+ 
+**Windows:**
+```
+explorer src
+```
+ 
+This will pop open the `src` folder directly in your file explorer. Now drag and drop (or copy and paste) **`KanbanBoard.jsx`** and **`KanbanBoard.test.jsx`** into that window.
+ 
 When done, the `src` folder should contain (among other files already there):
 - `KanbanBoard.jsx`
 - `KanbanBoard.test.jsx`
