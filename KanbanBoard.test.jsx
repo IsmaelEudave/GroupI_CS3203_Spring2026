@@ -12,9 +12,8 @@ describe("KanbanBoard", () => {
   describe("initial render", () => {
     it("renders the board title", () => {
       render(<KanbanBoard />);
-      expect(
-        screen.getByText((_, el) => el?.textContent === "TaskLU Board")
-      ).toBeInTheDocument();
+      const heading = screen.getByRole("heading", { level: 1 });
+      expect(heading.textContent).toBe("TaskLU Board");
     });
 
     it("renders all four column headers", () => {
