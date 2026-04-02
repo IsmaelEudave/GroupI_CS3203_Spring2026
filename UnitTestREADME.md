@@ -53,7 +53,16 @@ This only takes a few seconds.
 
 ---
 
-## Step 5 — Add the Test Files
+## Step 5 — Download the Files
+ 
+Download both of these files from the repository. Your browser will save them to your **Downloads** folder by default.
+ 
+- `KanbanBoard.jsx`
+- `KanbanBoard.test.jsx`
+
+---
+
+## Step 6 — Add the Test Files
 
 First, open the `src` folder on your computer using the terminal. Paste the command for your system and press **Enter**:
 
@@ -75,7 +84,7 @@ When done, the `src` folder should contain (among other files already there):
 
 ---
 
-## Step 6 — Run the Tests
+## Step 7 — Run the Tests
 
 Go back to your terminal window and paste this command, then press **Enter**:
 
