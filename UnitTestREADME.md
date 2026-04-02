@@ -95,7 +95,7 @@ npm test
 After a few seconds you should see results like this, showing all tests passed:
 
 ```
-Tests: 15 passed, 15 total
+Tests: 17 passed, 17 total
 ```
 
 > **To stop the tests** at any time, press **Ctrl + C** in the terminal.
