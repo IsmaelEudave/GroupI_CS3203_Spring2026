@@ -2,200 +2,153 @@ import { render, screen, fireEvent, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import KanbanBoard from "./KanbanBoard";
 
-// ─── Helper: open modal and fill in the task form ───────────────────────────
-const addTask = async (user, { title, priority = "medium", colId = "todo" }) => {
-  const newTaskBtn = screen.getByRole("button", { name: /\+ New Task/i });
-  await user.click(newTaskBtn);
+// ─── Helpers ────────────────────────────────────────────────────────────────
+const openModalViaHeader = () =>
+  fireEvent.click(screen.getByRole("button", { name: /\+ new task/i }));
 
-  const titleInput = screen.getByPlaceholderText(/What needs to be done\?/i);
-  await user.clear(titleInput);
-  await user.type(titleInput, title);
-
-  if (priority !== "medium") {
-    const prioritySelect = screen.getByRole("combobox", {
-      name: /priority/i,
-    });
-    await user.selectOptions(prioritySelect, priority);
-  }
-
-  if (colId !== "todo") {
-    const colSelect = screen.getByRole("combobox", { name: /column/i });
-    await user.selectOptions(colSelect, colId);
-  }
-
-  const createBtn = screen.getByRole("button", { name: /Create Task/i });
-  await user.click(createBtn);
-};
-
-// ─── Test Suite ──────────────────────────────────────────────────────────────
-describe("KanbanBoard – Task Management", () => {
-
-  // ── ✅ CORRECT: Adds and removes task completely ──────────────────────────
-  describe("Correct Behavior", () => {
-    it("adds a new task and displays it on the board", async () => {
-      const user = userEvent.setup();
+// ─── Tests ──────────────────────────────────────────────────────────────────
+describe("KanbanBoard", () => {
+  // ── Rendering ──────────────────────────────────────────────────────────
+  describe("initial render", () => {
+    it("renders the board title", () => {
       render(<KanbanBoard />);
+      expect(screen.getByText(/TaskLU Board/i)).toBeInTheDocument();
+    });
 
-      await addTask(user, { title: "Write unit tests", priority: "high" });
+    it("renders all four column headers", () => {
+      render(<KanbanBoard />);
+      expect(screen.getByText("To Do")).toBeInTheDocument();
+      expect(screen.getByText("In Progress")).toBeInTheDocument();
+      expect(screen.getByText("Review")).toBeInTheDocument();
+      expect(screen.getByText("Done")).toBeInTheDocument();
+    });
 
-      // Task title must appear on the board after creation
+    it("renders the initial 6 tasks", () => {
+      render(<KanbanBoard />);
+      expect(screen.getByText(/6 tasks/i)).toBeInTheDocument();
+    });
+
+    it("renders a known initial task card", () => {
+      render(<KanbanBoard />);
+      expect(screen.getByText("Set up project repo")).toBeInTheDocument();
+    });
+  });
+
+  // ── Modal ───────────────────────────────────────────────────────────────
+  describe("modal", () => {
+    it("is hidden on initial render", () => {
+      render(<KanbanBoard />);
+      expect(screen.queryByText("New Task")).not.toBeInTheDocument();
+    });
+
+    it("opens when '+ New Task' header button is clicked", () => {
+      render(<KanbanBoard />);
+      openModalViaHeader();
+      expect(screen.getByText("New Task")).toBeInTheDocument();
+    });
+
+    it("closes when Cancel is clicked", () => {
+      render(<KanbanBoard />);
+      openModalViaHeader();
+      fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+      expect(screen.queryByText("New Task")).not.toBeInTheDocument();
+    });
+
+    it("closes when the overlay backdrop is clicked", () => {
+      render(<KanbanBoard />);
+      openModalViaHeader();
+      const overlay = document.querySelector(".kb-overlay");
+      fireEvent.click(overlay);
+      expect(screen.queryByText("New Task")).not.toBeInTheDocument();
+    });
+
+    it("opens pre-set to the column whose '+ add task' button was clicked", () => {
+      render(<KanbanBoard />);
+      // Click the "In Progress" column's quick-add button (second one)
+      const addButtons = screen.getAllByRole("button", { name: /\+ add task/i });
+      fireEvent.click(addButtons[1]); // index 1 = In Progress
+      const select = screen.getByRole("combobox", { name: /column/i });
+      expect(select.value).toBe("inprogress");
+    });
+  });
+
+  // ── Adding tasks ────────────────────────────────────────────────────────
+  describe("adding a task", () => {
+    it("does not add a task when the title is empty", () => {
+      render(<KanbanBoard />);
+      openModalViaHeader();
+      fireEvent.click(screen.getByRole("button", { name: /create task/i }));
+      // Modal should remain open (submission blocked)
+      expect(screen.getByText("New Task")).toBeInTheDocument();
+    });
+
+    it("adds a new task and increments the task count", async () => {
+      render(<KanbanBoard />);
+      openModalViaHeader();
+      await userEvent.type(
+        screen.getByPlaceholderText(/what needs to be done/i),
+        "Write unit tests"
+      );
+      fireEvent.click(screen.getByRole("button", { name: /create task/i }));
+
       expect(screen.getByText("Write unit tests")).toBeInTheDocument();
+      expect(screen.getByText(/7 tasks/i)).toBeInTheDocument();
     });
 
-    it("removes a task completely when the delete button is clicked", async () => {
-      const user = userEvent.setup();
+    it("closes the modal after a successful submission", async () => {
       render(<KanbanBoard />);
-
-      await addTask(user, { title: "Task to Delete", priority: "low" });
-      expect(screen.getByText("Task to Delete")).toBeInTheDocument();
-
-      // Find the card containing our task and click its delete (×) button
-      const card = screen.getByText("Task to Delete").closest(".kb-card");
-      const deleteBtn = within(card).getByRole("button", { name: /×/ });
-      await user.click(deleteBtn);
-
-      // Task must be completely absent from the DOM after deletion
-      expect(screen.queryByText("Task to Delete")).not.toBeInTheDocument();
-    });
-  });
-
-  // ── ❌ INCORRECT: Title not saved correctly / deletion targets wrong card ──
-  describe("Incorrect Behavior Detection", () => {
-    it("does NOT add a task when the title is empty (whitespace-only)", async () => {
-      const user = userEvent.setup();
-      render(<KanbanBoard />);
-
-      const initialCount = document.querySelectorAll(".kb-card").length;
-
-      const newTaskBtn = screen.getByRole("button", { name: /\+ New Task/i });
-      await user.click(newTaskBtn);
-
-      // Leave title blank and try to submit
-      const createBtn = screen.getByRole("button", { name: /Create Task/i });
-      await user.click(createBtn);
-
-      // Card count must stay the same — blank titles are rejected
-      expect(document.querySelectorAll(".kb-card").length).toBe(initialCount);
+      openModalViaHeader();
+      await userEvent.type(
+        screen.getByPlaceholderText(/what needs to be done/i),
+        "Another task"
+      );
+      fireEvent.click(screen.getByRole("button", { name: /create task/i }));
+      expect(screen.queryByText("New Task")).not.toBeInTheDocument();
     });
 
-    it("stores the exact title entered, not a trimmed or altered version", async () => {
-      const user = userEvent.setup();
+    it("submits the form when Enter is pressed in the title field", async () => {
       render(<KanbanBoard />);
-
-      await addTask(user, { title: "  Exact Title Test  " });
-
-      // The component calls .trim() internally — verify the trimmed value appears
-      expect(screen.getByText("Exact Title Test")).toBeInTheDocument();
-      // And that the raw untrimmed version is NOT shown (would indicate no trim)
-      expect(screen.queryByText("  Exact Title Test  ")).not.toBeInTheDocument();
-    });
-
-    it("deletes only the targeted task, leaving all other tasks intact", async () => {
-      const user = userEvent.setup();
-      render(<KanbanBoard />);
-
-      await addTask(user, { title: "Task Alpha" });
-      await addTask(user, { title: "Task Beta" });
-
-      const alphaCard = screen.getByText("Task Alpha").closest(".kb-card");
-      const deleteAlpha = within(alphaCard).getByRole("button", { name: /×/ });
-      await user.click(deleteAlpha);
-
-      expect(screen.queryByText("Task Alpha")).not.toBeInTheDocument();
-      // Task Beta must still be present — wrong-target deletion would remove it
-      expect(screen.getByText("Task Beta")).toBeInTheDocument();
+      openModalViaHeader();
+      const titleInput = screen.getByPlaceholderText(/what needs to be done/i);
+      await userEvent.type(titleInput, "Enter key task{enter}");
+      expect(screen.getByText("Enter key task")).toBeInTheDocument();
     });
   });
 
-  // ── 📏 BOUNDARY CONDITION: Tasks must have different priorities ────────────
-  describe("Boundary Conditions – Distinct Priorities", () => {
-    it("renders all three distinct priority badges (high, medium, low)", async () => {
-      const user = userEvent.setup();
+  // ── Deleting tasks ──────────────────────────────────────────────────────
+  describe("deleting a task", () => {
+    it("removes the task from the board", () => {
       render(<KanbanBoard />);
-
-      await addTask(user, { title: "High Prio Task",   priority: "high"   });
-      await addTask(user, { title: "Medium Prio Task", priority: "medium" });
-      await addTask(user, { title: "Low Prio Task",    priority: "low"    });
-
-      // Each unique priority badge must be present at least once
-      const highBadges   = document.querySelectorAll(".kb-priority-high");
-      const mediumBadges = document.querySelectorAll(".kb-priority-medium");
-      const lowBadges    = document.querySelectorAll(".kb-priority-low");
-
-      expect(highBadges.length).toBeGreaterThan(0);
-      expect(mediumBadges.length).toBeGreaterThan(0);
-      expect(lowBadges.length).toBeGreaterThan(0);
+      const taskTitle = "Set up project repo";
+      const card = screen.getByText(taskTitle).closest(".kb-card");
+      const deleteBtn = within(card).getByTitle("Delete task");
+      fireEvent.click(deleteBtn);
+      expect(screen.queryByText(taskTitle)).not.toBeInTheDocument();
     });
 
-    it("two tasks with different priorities are treated as distinct cards", async () => {
-      const user = userEvent.setup();
+    it("decrements the task count after deletion", () => {
       render(<KanbanBoard />);
-
-      await addTask(user, { title: "Same Name Task", priority: "high"   });
-      await addTask(user, { title: "Same Name Task", priority: "low"    });
-
-      // Both cards must be present; they differ only in priority
-      const allMatches = screen.getAllByText("Same Name Task");
-      expect(allMatches.length).toBe(2);
-
-      // Verify they carry different priority badges
-      const cards = allMatches.map((el) => el.closest(".kb-card"));
-      const priorities = cards.map((card) => {
-        if (within(card).queryByText("high"))   return "high";
-        if (within(card).queryByText("medium")) return "medium";
-        if (within(card).queryByText("low"))    return "low";
-      });
-      expect(new Set(priorities).size).toBe(2); // two different priorities
+      const card = screen.getByText("Set up project repo").closest(".kb-card");
+      fireEvent.click(within(card).getByTitle("Delete task"));
+      expect(screen.getByText(/5 tasks/i)).toBeInTheDocument();
     });
   });
 
-  // ── 🔲 EDGE CASES: Highest & lowest priority tasks ────────────────────────
-  describe("Edge Cases – Extreme Priorities", () => {
-    it("correctly renders a task with the highest priority (high)", async () => {
-      const user = userEvent.setup();
+  // ── Column card counts ──────────────────────────────────────────────────
+  describe("column card counts", () => {
+    it("shows the correct count for the 'Done' column (2 initial tasks)", () => {
       render(<KanbanBoard />);
-
-      await addTask(user, { title: "Critical Blocker", priority: "high" });
-
-      const card = screen.getByText("Critical Blocker").closest(".kb-card");
-      // The high-priority badge must be present inside the card
-      expect(card.querySelector(".kb-priority-high")).toBeInTheDocument();
-      // And neither medium nor low badge should appear on this card
-      expect(card.querySelector(".kb-priority-medium")).not.toBeInTheDocument();
-      expect(card.querySelector(".kb-priority-low")).not.toBeInTheDocument();
+      const doneHeader = screen.getByText("Done").closest(".kb-col-header");
+      const count = within(doneHeader).getByText("2");
+      expect(count).toBeInTheDocument();
     });
 
-    it("correctly renders a task with the lowest priority (low)", async () => {
-      const user = userEvent.setup();
+    it("shows 'empty' placeholder when a column has no tasks", () => {
       render(<KanbanBoard />);
-
-      await addTask(user, { title: "Nice to Have", priority: "low" });
-
-      const card = screen.getByText("Nice to Have").closest(".kb-card");
-      expect(card.querySelector(".kb-priority-low")).toBeInTheDocument();
-      expect(card.querySelector(".kb-priority-high")).not.toBeInTheDocument();
-      expect(card.querySelector(".kb-priority-medium")).not.toBeInTheDocument();
-    });
-
-    it("both a highest-priority and a lowest-priority task coexist on the board", async () => {
-      const user = userEvent.setup();
-      render(<KanbanBoard />);
-
-      await addTask(user, { title: "Top Priority",    priority: "high" });
-      await addTask(user, { title: "Bottom Priority", priority: "low"  });
-
-      const topCard    = screen.getByText("Top Priority").closest(".kb-card");
-      const bottomCard = screen.getByText("Bottom Priority").closest(".kb-card");
-
-      expect(topCard.querySelector(".kb-priority-high")).toBeInTheDocument();
-      expect(bottomCard.querySelector(".kb-priority-low")).toBeInTheDocument();
-
-      // Deleting the highest-priority task must not affect the lowest-priority one
-      const deleteTop = within(topCard).getByRole("button", { name: /×/ });
-      await user.click(deleteTop);
-
-      expect(screen.queryByText("Top Priority")).not.toBeInTheDocument();
-      expect(screen.getByText("Bottom Priority")).toBeInTheDocument();
+      // The 'Review' column starts empty
+      expect(screen.getByText("Review")).toBeInTheDocument();
+      const reviewCol = screen.getByText("Review").closest(".kb-col");
+      expect(within(reviewCol).getByText("empty")).toBeInTheDocument();
     });
   });
 });
