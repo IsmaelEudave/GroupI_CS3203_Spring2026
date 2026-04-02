@@ -12,7 +12,9 @@ describe("KanbanBoard", () => {
   describe("initial render", () => {
     it("renders the board title", () => {
       render(<KanbanBoard />);
-      expect(screen.getByText(/TaskLU Board/i)).toBeInTheDocument();
+      expect(
+        screen.getByText((_, el) => el?.textContent === "TaskLU Board")
+      ).toBeInTheDocument();
     });
 
     it("renders all four column headers", () => {
