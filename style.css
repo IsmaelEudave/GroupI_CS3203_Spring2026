@@ -36,6 +36,20 @@
     --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+[data-theme="light"] {
+    --bg-base: #f0f4f8;
+    --bg-surface: rgba(255, 255, 255, 0.85);
+    --bg-surface-hover: rgba(255, 255, 255, 0.95);
+    --bg-input: rgba(255, 255, 255, 0.7);
+    
+    --text-primary: #0f1115;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -57,6 +71,13 @@ body {
         radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
     background-attachment: fixed;
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+[data-theme="light"] body {
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 50%);
 }
 
 /* App Container (Glassmorphism) */
@@ -82,6 +103,75 @@ body {
 .app-header {
     text-align: center;
     margin-bottom: 1rem;
+    position: relative;
+    padding-top: 0.5rem;
+}
+
+.theme-toggle-btn {
+    position: absolute;
+    top: -0.5rem;
+    right: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+}
+
+.theme-toggle-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.inbox-btn {
+    position: absolute;
+    top: -0.5rem;
+    right: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+}
+
+.inbox-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.inbox-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--danger);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-surface);
+}
+
+.inbox-badge.hidden {
+    display: none;
 }
 
 .app-header h1 {
@@ -136,6 +226,18 @@ body {
     font-family: inherit;
     outline: none;
     padding: 0.75rem 0;
+}
+
+[data-theme="light"] .theme-toggle-btn, 
+[data-theme="light"] .inbox-btn {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .theme-toggle-btn:hover, 
+[data-theme="light"] .inbox-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
 }
 
 #task-input::placeholder {
@@ -451,6 +553,67 @@ body {
     margin-bottom: 1rem;
 }
 
+/* Invite Form within Modal */
+.invite-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#invite-email-input {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+#invite-email-input:focus {
+    border-color: var(--accent-primary);
+}
+
+.invite-submit-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.invite-submit-btn:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider span {
+    padding: 0 0.5rem;
+}
+
 .user-list {
     display: flex;
     flex-direction: column;
@@ -499,6 +662,79 @@ body {
 .user-option-role {
     font-size: 0.75rem;
     color: var(--text-tertiary);
+}
+
+/* Inbox List */
+.inbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.inbox-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.inbox-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.inbox-item-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.inbox-item-text strong {
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.inbox-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.accept-btn, .decline-btn {
+    flex: 1;
+    padding: 0.4rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.accept-btn {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+}
+
+.accept-btn:hover {
+    background: var(--success);
+    color: white;
+}
+
+.decline-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-tertiary);
+}
+
+.decline-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
 }
 
 /* Animations */
