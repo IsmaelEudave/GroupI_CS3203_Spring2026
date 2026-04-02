@@ -1,0 +1,12 @@
+{
+  "name": "groupi-cs3203-spring2026",
+  "version": "1.0.0",
+  "description": "Unit tests for Focus Mode Timer feature",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
