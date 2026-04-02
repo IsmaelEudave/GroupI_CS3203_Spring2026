@@ -1,134 +1,98 @@
 # Running the KanbanBoard Unit Tests
 
-This guide walks you through everything you need to run the unit tests for `KanbanBoard.jsx`.
+No coding experience needed — just follow each step in order.
 
 ---
 
-## Prerequisites
+## Step 1 — Install Node.js
 
-Make sure you have the following installed before you begin:
+Node.js is a free tool that lets your computer run the tests.
 
-- **Node.js** (v16 or higher) — [Download here](https://nodejs.org)
-- **npm** (comes bundled with Node.js)
+1. Go to [https://nodejs.org](https://nodejs.org)
+2. Click the big **"LTS"** download button (LTS = recommended, stable version)
+3. Open the downloaded file and follow the installer — just keep clicking **Next/Continue** until it finishes
+4. Restart your computer once it's done
 
-To check if you have them, run these commands in your terminal:
+---
 
-```bash
-node -v
-npm -v
+## Step 2 — Open the Terminal
+
+The terminal is a text-based window where you type commands to control your computer.
+
+**On Mac:**
+1. Press **Command (⌘) + Space** to open Spotlight Search
+2. Type `Terminal` and press **Enter**
+
+**On Windows:**
+1. Press the **Windows key**
+2. Type `cmd` and press **Enter**
+
+A black or white window will open. Don't worry — you'll just be copying and pasting the commands below into it.
+
+---
+
+## Step 3 — Create the Project
+
+Copy and paste this command into the terminal, then press **Enter**. This sets up a fresh project with everything pre-installed. It may take 1–2 minutes.
+
+```
+npx create-react-app my-app
 ```
 
-Both should print a version number. If they don't, install Node.js from the link above.
+When it finishes, paste this command and press **Enter**. This moves you inside the project folder that was just created.
 
----
-
-## Step 1 — Set Up Your Project
-
-If you don't already have a React project set up, the quickest way is with Create React App:
-
-```bash
-npx create-react-app my-app
+```
 cd my-app
 ```
 
-If you already have an existing project, just `cd` into it:
+---
 
-```bash
-cd your-project-folder
-```
+## Step 4 — Add the Test Files
+
+This is the step where you place the two files into the right folder on your computer.
+
+1. Open your **file explorer** (called **Finder** on Mac, **File Explorer** on Windows)
+2. Navigate to your home folder and look for a new folder called **`my-app`** — this was created in Step 3
+3. Open `my-app`, then open the folder inside it called **`src`**
+4. Copy **`KanbanBoard.jsx`** and **`KanbanBoard.test.jsx`** into this `src` folder
+
+When done, the `src` folder should contain (among other files already there):
+- `KanbanBoard.jsx`
+- `KanbanBoard.test.jsx`
 
 ---
 
-## Step 2 — Add the Files
+## Step 5 — Run the Tests
 
-Place both files into the `src/` folder of your project:
+Go back to your terminal window and paste this command, then press **Enter**:
 
 ```
-your-project/
-└── src/
-    ├── KanbanBoard.jsx
-    └── KanbanBoard.test.jsx
-```
-
----
-
-## Step 3 — Install the Testing Dependencies
-
-Run the following command from your project's root folder to install the required testing libraries:
-
-```bash
-npm install --save-dev @testing-library/react @testing-library/user-event @testing-library/jest-dom
-```
-
-> **What these do:**
-> - `@testing-library/react` — renders React components in tests
-> - `@testing-library/user-event` — simulates real user interactions (typing, clicking, etc.)
-> - `@testing-library/jest-dom` — adds helpful matchers like `toBeInTheDocument()`
-
----
-
-## Step 4 — Run the Tests
-
-From your project's root folder, run:
-
-```bash
 npm test
 ```
 
-Jest will start in **watch mode** and run the tests automatically. You should see output like this:
+After a few seconds you should see results like this, showing all tests passed:
 
 ```
- PASS  src/KanbanBoard.test.jsx
-  KanbanBoard
-    initial render
-      ✓ renders the board title
-      ✓ renders all four column headers
-      ✓ renders the initial 6 tasks
-      ✓ renders a known initial task card
-    modal
-      ✓ is hidden on initial render
-      ✓ opens when '+ New Task' header button is clicked
-      ...
-
-Test Suites: 1 passed, 1 total
-Tests:       15 passed, 15 total
+Tests: 15 passed, 15 total
 ```
 
-To run the tests **once** without watch mode (useful for CI or scripts), use:
-
-```bash
-npm test -- --watchAll=false
-```
+> **To stop the tests** at any time, press **Ctrl + C** in the terminal.
 
 ---
 
-## What the Tests Cover
+## Something Went Wrong?
 
-| Group | What's being tested |
-|---|---|
-| **Initial render** | Title, column headers, task count, and a known card |
-| **Modal** | Opens, closes, and pre-selects the right column |
-| **Adding tasks** | Validates input, adds cards, closes modal on success |
-| **Deleting tasks** | Removes the card and updates the count |
-| **Column card counts** | Count badges and the "empty" placeholder |
+**"npx is not recognized" or "npm is not found"**
+Node.js didn't install correctly. Go back to Step 1, re-run the installer, restart your computer, and try again.
 
----
+**The terminal says "my-app already exists"**
+The folder was already created from a previous attempt. Run this instead to delete it and start fresh:
 
-## Troubleshooting
+- Mac: `rm -rf my-app && npx create-react-app my-app`
+- Windows: `rmdir /s /q my-app && npx create-react-app my-app`
 
-**Tests fail with "Cannot find module './KanbanBoard'"**
-Make sure `KanbanBoard.jsx` and `KanbanBoard.test.jsx` are in the **same folder**.
-
-**"toBeInTheDocument is not a function"**
-Add this import to the top of `KanbanBoard.test.jsx`:
-```js
-import "@testing-library/jest-dom";
-```
-Or add it globally in `src/setupTests.js` (Create React App does this automatically).
-
-**"userEvent is not a function" or similar**
-Make sure you installed the dependencies in Step 3, and that `@testing-library/user-event` is version **14 or higher**:
-```bash
+**Tests fail or show red errors**
+Double-check that both files are inside the `src` folder (not inside any other folder within `src`, just directly inside it).
 npm list @testing-library/user-event
 ```
 
