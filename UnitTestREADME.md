@@ -33,12 +33,22 @@ cd GroupI_CS3203_Spring2026
 
 ```bash
 npm install
-npm install --save-dev @testing-library/react @testing-library/user-event jest
+npm install --save-dev @testing-library/react @testing-library/user-event jest babel-jest @babel/core @babel/preset-env @babel/preset-react
 ```
 
 ---
 
-## Step 3 — Run the Tests
+## Step 3 — Configure Babel
+
+Jest needs Babel to understand JSX. Create a `babel.config.json` file in the project root:
+
+```bash
+echo '{"presets": ["@babel/preset-env", "@babel/preset-react"]}' > babel.config.json
+```
+
+---
+
+## Step 4 — Run the Tests
 
 ```bash
 npx jest KanbanBoard.test.jsx
@@ -93,4 +103,4 @@ Use `npx jest` instead of `jest` directly.
 Make sure `KanbanBoard.test.jsx` and `KanbanBoard.jsx` are in the same folder.
 
 **Tests fail with React errors**  
-Ensure `@testing-library/react` was installed in Step 2.
+Ensure `@testing-library/react` was installed in Step 2 and `babel.config.json` was created in Step 3.
