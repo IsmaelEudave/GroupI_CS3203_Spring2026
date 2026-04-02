@@ -55,7 +55,7 @@ This only takes a few seconds.
 
 ## Step 5 — Download the Files
  
-Download both of these files from the repository. Your browser will save them to your **Downloads** folder by default.
+Download both of these files from the repository (on the left of your screen by default). Your browser will save them to your **Downloads** folder by default.
  
 - `KanbanBoard.jsx`
 - `KanbanBoard.test.jsx`
