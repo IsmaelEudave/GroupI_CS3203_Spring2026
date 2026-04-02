@@ -67,8 +67,9 @@ describe("KanbanBoard", () => {
       // Click the "In Progress" column's quick-add button (second one)
       const addButtons = screen.getAllByRole("button", { name: /\+ add task/i });
       fireEvent.click(addButtons[1]); // index 1 = In Progress
-      const select = screen.getByRole("combobox", { name: /column/i });
-      expect(select.value).toBe("inprogress");
+      // The Column select is the first <select> in the modal
+      const selects = screen.getAllByRole("combobox");
+      expect(selects[0].value).toBe("inprogress");
     });
   });
 
@@ -83,9 +84,10 @@ describe("KanbanBoard", () => {
     });
 
     it("adds a new task and increments the task count", async () => {
+      const user = userEvent.setup();
       render(<KanbanBoard />);
       openModalViaHeader();
-      await userEvent.type(
+      await user.type(
         screen.getByPlaceholderText(/what needs to be done/i),
         "Write unit tests"
       );
@@ -96,9 +98,10 @@ describe("KanbanBoard", () => {
     });
 
     it("closes the modal after a successful submission", async () => {
+      const user = userEvent.setup();
       render(<KanbanBoard />);
       openModalViaHeader();
-      await userEvent.type(
+      await user.type(
         screen.getByPlaceholderText(/what needs to be done/i),
         "Another task"
       );
@@ -107,10 +110,12 @@ describe("KanbanBoard", () => {
     });
 
     it("submits the form when Enter is pressed in the title field", async () => {
+      const user = userEvent.setup();
       render(<KanbanBoard />);
       openModalViaHeader();
       const titleInput = screen.getByPlaceholderText(/what needs to be done/i);
-      await userEvent.type(titleInput, "Enter key task{enter}");
+      await user.type(titleInput, "Enter key task");
+      await user.keyboard("{Enter}");
       expect(screen.getByText("Enter key task")).toBeInTheDocument();
     });
   });
