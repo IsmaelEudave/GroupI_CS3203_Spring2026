@@ -23,10 +23,10 @@ feature/Ava-FocusMode
 This project requires Node.js and npm.
 
 **On Windows or Mac:**
-Go to: https://nodejs.org
-Download the LTS version
-Install using default settings
-Restart your terminal
+1. Go to: https://nodejs.org
+2. Download the LTS version
+3. Install using default settings
+4. Restart your terminal
 
 ## Verify Installation
 
