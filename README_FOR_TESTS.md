@@ -23,6 +23,8 @@ The first step is to clone the repository to your local machine. The steps are l
     git clone -b feature/cale-communicationFeature --single-branch https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git
     ```
 
+4. Navigate into the newly created ``GroupI_CS3203_Spring2026`` folder in the directory created in step 1.
+
 ## Executing the Tests
 
 1. Ensure that you are in the root directory of the project.
