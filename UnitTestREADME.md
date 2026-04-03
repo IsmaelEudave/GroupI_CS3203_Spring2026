@@ -25,76 +25,51 @@ A black or white window will open. You'll just be copying and pasting the comman
 
 ---
 
-## Step 3 — Create the Project
+## Step 3 — Clone the Repo & Switch Branches
 
-Copy and paste this command into the terminal, then press **Enter**. This sets up a fresh project with everything pre-installed. It may take 1–2 minutes.
+Copy and paste this command into the terminal, then press **Enter**. This will download the project to your computer.
 
+```bash
+git clone [https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git](https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git)
 ```
-npx create-react-app my-app
+
+When it finishes, paste this command and press **Enter**. This moves you inside the newly downloaded project folder.
+
+```bash
+cd GroupI_CS3203_Spring2026
 ```
 
-When it finishes, paste this command and press **Enter**. This moves you inside the project folder that was just created.
+Finally, switch to the specific branch that contains the code for this review by running:
 
-```
-cd my-app
+```bash
+git checkout feature/Ismael-KanBanBoard
 ```
 
 ---
 
-## Step 4 — Update a Testing Library
+## Step 4 — Install Dependencies
 
-Create React App comes with an older version of one testing tool that needs to be updated. Paste this command and press **Enter**:
+Now that you are inside the correct branch, you need to install the required tools and testing libraries. Paste this command and press **Enter**:
 
+```bash
+npm install
 ```
-npm install --save-dev @testing-library/user-event@latest
-```
 
-This only takes a few seconds.
+This may take a minute or two. It automatically looks at the `package.json` file and downloads everything you need!
 
 ---
 
-## Step 5 — Download the Files
- 
-Download both of these files from the repository (on the left of your screen by default). Your browser will save them to your **Downloads** folder by default.
- 
-- `KanbanBoard.jsx`
-- `KanbanBoard.test.jsx`
+## Step 5 — Run the Tests
 
----
+Once the installation is complete, paste this command and press **Enter**:
 
-## Step 6 — Add the Test Files
-
-First, open the `src` folder on your computer using the terminal. Paste the command for your system and press **Enter**:
-
-**Mac:**
-```
-open src
-```
-
-**Windows:**
-```
-explorer src
-```
-
-This will pop open the `src` folder directly in your file explorer. Now drag and drop (or copy and paste) **`KanbanBoard.jsx`** and **`KanbanBoard.test.jsx`** into that window.
-
-When done, the `src` folder should contain (among other files already there):
-- `KanbanBoard.jsx`
-- `KanbanBoard.test.jsx`
-
----
-
-## Step 7 — Run the Tests
-
-Go back to your terminal window and paste this command, then press **Enter**:
-
-```
+```bash
 npm test
 ```
 
-After a few seconds you should see results like this, showing all tests passed:
+After a few seconds, you should see results like this, showing all tests passed:
 
-```
+```text
 Tests: 17 passed, 17 total
 ```
 
@@ -104,14 +79,8 @@ Tests: 17 passed, 17 total
 
 ## Something Went Wrong?
 
-**"npx is not recognized" or "npm is not found"**
+**"npm is not recognized" or "npm is not found"**
 Node.js didn't install correctly. Go back to Step 1, re-run the installer, then close and reopen the terminal and try again.
 
-**The terminal says "my-app already exists"**
-The folder was already created from a previous attempt. Run this instead to delete it and start fresh:
-
-- Mac: `rm -rf my-app && npx create-react-app my-app`
-- Windows: `rmdir /s /q my-app && npx create-react-app my-app`
-
-**Tests fail or show red errors**
-Double-check that both files are inside the `src` folder (not inside any other folder within `src`, just directly inside it).
+**The terminal says "fatal: destination path 'GroupI_CS3203_Spring2026' already exists"**
+You already downloaded the folder from a previous attempt. You can delete the `GroupI_CS3203_Spring2026` folder from your computer and start Step 3 again.
