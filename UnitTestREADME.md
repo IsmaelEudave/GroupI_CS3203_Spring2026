@@ -66,6 +66,7 @@ Once the installation is complete, paste this command and press **Enter**:
 ```bash
 npm test
 ```
+Note: If the terminal says "No tests found related to files changed since last commit", simply press the a key on your keyboard to force all the tests to run!
 
 After a few seconds, you should see results like this, showing all tests passed:
 
