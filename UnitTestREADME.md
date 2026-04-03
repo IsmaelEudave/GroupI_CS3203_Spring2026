@@ -30,7 +30,7 @@ A black or white window will open. You'll just be copying and pasting the comman
 Copy and paste this command into the terminal, then press **Enter**. This will download the project to your computer.
 
 ```bash
-git clone [https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git](https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git)
+git clone https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git
 ```
 
 When it finishes, paste this command and press **Enter**. This moves you inside the newly downloaded project folder.
