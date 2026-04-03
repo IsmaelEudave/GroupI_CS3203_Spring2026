@@ -100,14 +100,6 @@ PASS tests/focus-mode.test.js
 All tests should pass successfully.
 
 ---
-## Something Went Wrong?
-
-**"npm is not recognized" or "npm is not found"**
-Node.js didn't install correctly. Go back to Step 1, re-run the installer, then close and reopen the terminal and try again.
-
-**The terminal says "fatal: destination path 'GroupI_CS3203_Spring2026' already exists"**
-You already downloaded the folder from a previous attempt. You can delete the `GroupI_CS3203_Spring2026` folder from your computer and start Step 3 again.
----
 
 ## Test Coverage
 
