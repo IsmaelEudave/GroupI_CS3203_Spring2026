@@ -18,14 +18,14 @@ feature/Ava-FocusMode
 
 ## Setup Instructions
 
-## Install Node.js
+## Install Node.js (if not already installed)
 
 This project requires Node.js and npm.
 
 **On Windows or Mac:**
 1. Go to: https://nodejs.org
-2. Download the LTS version
-3. Install using default settings
+2. Click "Get Node.js" and Download the LTS version
+3. Open the downloaded file and follow the installer, just keep clicking **Next/Continue** until it finishes
 4. If you have terminal open, restart it
 
 ## Open the Terminal
@@ -100,20 +100,13 @@ PASS tests/focus-mode.test.js
 All tests should pass successfully.
 
 ---
+## Something Went Wrong?
 
-## Unit Test File
+**"npm is not recognized" or "npm is not found"**
+Node.js didn't install correctly. Go back to Step 1, re-run the installer, then close and reopen the terminal and try again.
 
-```text
-tests/focus-mode.test.js
-```
-
----
-
-## Tested Module
-
-```text
-docs/js/focus-mode-logic.js
-```
+**The terminal says "fatal: destination path 'GroupI_CS3203_Spring2026' already exists"**
+You already downloaded the folder from a previous attempt. You can delete the `GroupI_CS3203_Spring2026` folder from your computer and start Step 3 again.
 ---
 
 ## Test Coverage
