@@ -56,6 +56,18 @@ This command is configured to run only the Focus Mode unit tests.
 
 ---
 
+## Expected Output
+
+The test suite should execute and display:
+
+```text
+PASS tests/focus-mode.test.js
+```
+
+All tests should pass successfully.
+
+---
+
 ## Unit Test File
 
 ```text
@@ -69,19 +81,6 @@ tests/focus-mode.test.js
 ```text
 docs/js/focus-mode-logic.js
 ```
-
----
-
-## Expected Output
-
-The test suite should execute and display:
-
-```text
-PASS tests/focus-mode.test.js
-```
-
-All tests should pass successfully.
-
 ---
 
 ## Test Coverage
