@@ -59,13 +59,14 @@ function formatDur(d) {
 function makeTaskStore() {
   let tasks = [];
   let priority = 'medium';
+  let nextId = 1;
 
   function setPriority(p) { priority = p; }
   function getPriority() { return priority; }
 
   function addTask(title, date, time, duration, category, notes) {
     if (!title.trim()) return false;
-    tasks.unshift({ id: Date.now(), title: title.trim(), date, time, duration, category, priority, notes });
+    tasks.unshift({ id: nextId++, title: title.trim(), date, time, duration, category, priority, notes });
     return true;
   }
 
@@ -75,7 +76,6 @@ function makeTaskStore() {
 
   return { setPriority, getPriority, addTask, removeTask, getTasks, clear };
 }
-
 /* Test framework */
 
 const suites = [];
