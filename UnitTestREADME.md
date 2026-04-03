@@ -2,6 +2,8 @@
 
 ---
 
+Note: Please make sure you have git installed if you haven't already. The link to download git is [here](https://git-scm.com/install/windows)
+
 ## Step 1 — Install Node.js
 
 1. Go to [https://nodejs.org](https://nodejs.org)
