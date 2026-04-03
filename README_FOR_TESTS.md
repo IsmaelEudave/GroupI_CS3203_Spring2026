@@ -30,8 +30,9 @@ The first step is to clone the repository to your local machine. The steps are l
 2. Run the following command.
 
     ```bash
-    python -m unittest -v test_message_service.py
+    python3 test_message_service.py
     ```
+    *(Note: On Windows, you can also use `python test_message_service.py`)*
 
 ## Questions or Concerns?
 
