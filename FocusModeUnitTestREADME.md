@@ -18,7 +18,24 @@ feature/Ava-FocusMode
 
 ## Setup Instructions
 
-Open the Terminal
+## Install Node.js
+
+1. Go to [https://nodejs.org](https://nodejs.org)
+2. Click the big **"LTS"** download button (LTS = recommended, stable version)
+3. Open the downloaded file and follow the installer — just keep clicking **Next/Continue** until it finishes
+4. Once it's done, if you already have a terminal window open, close it and reopen it before continuing
+
+## Verify Installation
+
+Run:
+```bash
+node -v
+npm -v
+```
+If both commands print version numbers, you are ready to continue.
+
+
+## Open the Terminal
 
 **On Mac:**
 1. Press **Command (⌘) + Space** to open Spotlight Search
