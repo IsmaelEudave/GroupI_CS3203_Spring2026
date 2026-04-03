@@ -19,23 +19,36 @@ feature/Ava-FocusMode
 ## IMPORTANT
 After cloning the repository, you MUST switch to the correct branch:
 
+```bash
 git checkout feature/Ava-FocusMode
-
+```
 ---
 
 ## Setup Instructions
 
 1. Clone the repository:
+
+```bash
 git clone https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git
+```
 
 2. Navigate into the project folder:
+
+```bash
 cd GroupI_CS3203_Spring2026
+```
 
 3. Switch to the feature branch:
+
+```bash
 git checkout feature/Ava-FocusMode
+```
 
 4. Install dependencies:
+
+```bash
 npm install
+```
 
 ---
 
@@ -43,7 +56,9 @@ npm install
 
 Run the following command:
 
+```bash
 npm test
+```
 
 This command is configured to run only the Focus Mode unit tests.
 
@@ -51,13 +66,17 @@ This command is configured to run only the Focus Mode unit tests.
 
 ## Unit Test File
 
+```text
 tests/focus-mode.test.js
+```
 
 ---
 
 ## Tested Module
 
+```text
 docs/js/focus-mode-logic.js
+```
 
 ---
 
@@ -65,7 +84,9 @@ docs/js/focus-mode-logic.js
 
 The test suite should execute and display:
 
+```text
 PASS tests/focus-mode.test.js
+```
 
 All tests should pass successfully.
 
