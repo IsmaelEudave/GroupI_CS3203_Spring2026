@@ -2,13 +2,19 @@
 
 This file explains how to run the unit tests for the Task Insights Dashboard feature.
 
-## Feature Overview
+## Clone the Repository
 
-The Task Insights Dashboard provides a visual interface for analyzing task data, including:
-- Task completion percentage
-- Task status breakdown (completed, in progress, not started)
-- Filtering by team member and status
-- Deadline insights (due this week and overdue tasks)
+git clone https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026
+
+cd GroupI_CS3203_Spring2026
+
+## Install Dependencies
+
+npm install
+
+## Run Unit Tests
+
+npm test
 
 ## File Location
 
@@ -30,14 +36,6 @@ The following functionality is tested:
 - Due this week logic
 - Overdue task detection
 
-## How to Run Tests
+## Unit Test File
 
-1. Install dependencies:
-   npm install
-
-2. Run tests:
-   npm test
-
-## Expected Result
-
-All tests should pass successfully. You should see output indicating that all test cases are passing.
+docs/dashboard/dashboardLogic.test.js
