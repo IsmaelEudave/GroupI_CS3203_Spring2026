@@ -18,6 +18,20 @@ feature/Ava-FocusMode
 
 ## Setup Instructions
 
+Open the Terminal
+
+**On Mac:**
+1. Press **Command (⌘) + Space** to open Spotlight Search
+2. Type `Terminal` and press **Enter**
+
+**On Windows:**
+1. Press the **Windows key**
+2. Type `cmd` and press **Enter**
+
+When the terminal window opens, copy and paste the commands below into it.
+
+---
+
 1. Clone the repository:
 
 ```bash
