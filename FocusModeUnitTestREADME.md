@@ -20,10 +20,13 @@ feature/Ava-FocusMode
 
 ## Install Node.js
 
-1. Go to [https://nodejs.org](https://nodejs.org)
-2. Click the big **"LTS"** download button (LTS = recommended, stable version)
-3. Open the downloaded file and follow the installer — just keep clicking **Next/Continue** until it finishes
-4. Once it's done, if you already have a terminal window open, close it and reopen it before continuing
+This project requires Node.js and npm.
+
+**On Windows or Mac:**
+Go to: https://nodejs.org
+Download the LTS version
+Install using default settings
+Restart your terminal
 
 ## Verify Installation
 
