@@ -16,14 +16,6 @@ feature/Ava-FocusMode
 
 ---
 
-## IMPORTANT
-After cloning the repository, you MUST switch to the correct branch:
-
-```bash
-git checkout feature/Ava-FocusMode
-```
----
-
 ## Setup Instructions
 
 1. Clone the repository:
