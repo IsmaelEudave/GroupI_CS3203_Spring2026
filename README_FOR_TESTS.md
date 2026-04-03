@@ -9,7 +9,7 @@
 
 The first step is to clone the repository to your local machine. The steps are listed below:
 
-1. Create a folder that you want to store the project in. 
+1. Create a new folder that you want to store the project in. 
 
 2. Navigate into this folder and then open your terminal
 
