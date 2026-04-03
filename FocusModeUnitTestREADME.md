@@ -26,17 +26,7 @@ This project requires Node.js and npm.
 1. Go to: https://nodejs.org
 2. Download the LTS version
 3. Install using default settings
-4. Restart your terminal
-
-## Verify Installation
-
-Run:
-```bash
-node -v
-npm -v
-```
-If both commands print version numbers, you are ready to continue.
-
+4. If you have terminal open, restart it
 
 ## Open the Terminal
 
@@ -49,6 +39,15 @@ If both commands print version numbers, you are ready to continue.
 2. Type `cmd` and press **Enter**
 
 When the terminal window opens, copy and paste the commands below into it.
+
+## Verify Node.js Installation
+
+Run:
+```bash
+node -v
+npm -v
+```
+If both commands print version numbers, you are ready to continue.
 
 ---
 
