@@ -1,92 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group 7 Dashboard</title>
 
-    <!-- CONFIG: Set the web page title here -->
-    <title>TaskLU - Team Dashboard</title>
-    <style>
-        /* CONFIG: General page appearance */
-        body {
-            margin: 2rem;
-            line-height: 1.6;
-            background-color: #5daaf7; /* Light gray background */
-            color: #333; /* Dark gray text */
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        }
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18",
+        "react-dom/client": "https://esm.sh/react-dom@18/client"
+      }
+    }
+  </script>
 
-        h1 {
-            color: #2a549d; /* Brand color for the heading */
-        }
+  <style>
+    body {
+      margin: 0;
+      background: #0f0f11;
+      color: white;
+      font-family: sans-serif;
+    }
+    
+    .dashboard-grid {
+      display: grid;
+      /* Task creator gets 380px, Kanban gets the rest */
+      grid-template-columns: 380px 1fr; 
+      gap: 20px;
+      padding: 20px;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    
+    .feature-container {
+      background: #16161a;
+      border: 1px solid #2a2a30;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-y: auto;
+    }
 
-        /* CONFIG: Button styling */
-        button {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #264653;
-            color: rgb(148, 135, 135);
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #2a9d8f;
-        }
-
-        /* CONFIG: Team list layout */
-        #names-list {
-            margin-top: 1.5rem;
-            padding-left: 0;
-            list-style-type: none; /* Removes default bullet points */
-        }
-
-        /* CONFIG: Reusable class for team members */
-        .member-item {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-    </style>
+    /* Stack them on top of each other on smaller screens */
+    @media (max-width: 900px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-
 <body>
 
-    <h1>Way to go guys!</h1>
-    
-    <p>CI/CD Midterm was successful!</p>
+  <div class="dashboard-grid">
+    <div id="feature-task-creator" class="feature-container"></div>
 
-    <button onclick="toggleNames()">Show Names</button>
+    <div id="feature-kanban" class="feature-container"></div>
+  </div>
 
-    <ul id="names-list" style="display: none;">
-        <li class="member-item" style="color: #e63946;">Owen</li>
-        <li class="member-item" style="color: rgb(35, 137, 37);">Aiden</li>
-        <li class="member-item" style="color: #285650;">Cale</li>
-        <li class="member-item" style="color: #e63946;">Ava</li>
-        <li class="member-item" style="color: rgb(183, 226, 10);">Zac</li>
-        <li class="member-item" style="color: #b91796;">Ismael</li>
-        <li class="member-item" style="color: #000000;">Landen</li>
-        <li class="member-item" style="color: rgb(137, 101, 35);">Akshay</li>
-    </ul>
-
-    <script>
-        /**
-         * CONFIG: This function controls the visibility of the list.
-         * You can change the button text here.
-         */
-        function toggleNames() {
-            const list = document.getElementById('names-list');
-            const button = document.querySelector('button');
-            const isHidden = list.style.display === 'none';
-
-            // Switch display state
-            list.style.display = isHidden ? 'block' : 'none';
-            
-            // Switch button label
-            button.textContent = isHidden ? 'Hide Names' : 'Show Names';
-        }
-    </script>
+  <script type="module" src="./taskCreator.js"></script>
+  <script type="module" src="./main.js"></script>
 
 </body>
 </html>
