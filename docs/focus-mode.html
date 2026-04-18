@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Mode — TaskLU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0f0f11;
+      color: white;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 0.5px solid #2a2a30;
+      background: #16161a;
+    }
+
+    .nav-brand {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e8b84b;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #666;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 0.5px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .nav-link:hover {
+      color: #ccc;
+      background: #1e1e24;
+    }
+
+    .nav-link.active {
+      color: #e8b84b;
+      border-color: #e8b84b44;
+      background: #e8b84b0d;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 28px 40px;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: white;
+    }
+
+    .page-header p {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .focus-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .focus-card,
+    .history-card {
+      background: #16161a;
+      border: 0.5px solid #2a2a30;
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      border: 0.5px solid #333;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #0f0f11;
+      color: white;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .duration-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #timerDisplay {
+      font-size: 42px;
+      font-weight: 500;
+      color: #e8b84b;
+      text-align: center;
+      letter-spacing: 0.08em;
+      margin: 18px 0 20px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      padding: 9px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      border: 0.5px solid #333;
+      background: #e8b84b;
+      color: #0f0f11;
+    }
+
+    .btn-primary:hover:enabled {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      border: 0.5px solid #333;
+      background: transparent;
+      color: white;
+    }
+
+    .btn-secondary:hover:enabled {
+      background: #1e1e24;
+      color: #ccc;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    #sessionStatus {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #888;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .history-header h2 {
+      font-size: 16px;
+      font-weight: 500;
+      color: white;
+    }
+
+    .history-item {
+      background: #0f0f11;
+      border: 0.5px solid #333;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    .history-main {
+      margin-bottom: 8px;
+    }
+
+    .history-task {
+      font-size: 14px;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .history-status {
+      font-size: 12px;
+      color: #e8b84b;
+      margin-bottom: 4px;
+    }
+
+    .history-meta {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .history-times {
+      font-size: 12px;
+      color: #888;
+      display: grid;
+      gap: 4px;
+    }
+
+    .empty-history {
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 16px;
+      }
+
+      .focus-card,
+      .history-card {
+        padding: 16px;
+      }
+
+      .duration-inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-brand">TaskLU</span>
+    <div class="nav-links">
+      <a href="./index.html" class="nav-link">Dashboard</a>
+      <a href="./calendar.html" class="nav-link">Calendar</a>
+      <a href="./focus-mode.html" class="nav-link active">Focus Mode</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Focus Mode</h1>
+      <p>Choose a duration, label your work session, and track recent focus activity.</p>
+    </div>
+
+    <div class="focus-panel">
+      <section class="focus-card">
+        <div class="field">
+          <label for="taskNameInput">What are you working on? (optional)</label>
+          <input
+            type="text"
+            id="taskNameInput"
+            placeholder="e.g. Finish Kanban board"
+          >
+        </div>
+
+        <div class="field">
+          <label>Session Duration</label>
+          <div class="duration-inputs">
+            <div class="input-group">
+              <label for="hoursInput">Hours</label>
+              <input type="number" id="hoursInput" min="0" max="23" value="0">
+            </div>
+
+            <div class="input-group">
+              <label for="minutesInput">Minutes</label>
+              <input type="number" id="minutesInput" min="0" max="59" value="25">
+            </div>
+          </div>
+        </div>
+
+        <div id="timerDisplay">25:00</div>
+
+        <div class="button-group">
+          <button id="startBtn" class="btn-primary">Start</button>
+          <button id="pauseBtn" class="btn-secondary" disabled>Pause</button>
+          <button id="resumeBtn" class="btn-secondary" disabled>Resume</button>
+          <button id="endBtn" class="btn-secondary" disabled>End</button>
+        </div>
+
+        <p id="sessionStatus">Ready to start.</p>
+      </section>
+
+      <section class="history-card">
+        <div class="history-header">
+          <h2>Recent Focus Sessions</h2>
+          <button id="clearHistoryBtn" class="btn-secondary">Clear History</button>
+        </div>
+
+        <div id="sessionHistory">
+          <p class="empty-history">No focus sessions logged yet.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="./focus-mode.js"></script>
+</body>
+</html>
