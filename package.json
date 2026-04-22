@@ -1,0 +1,27 @@
+{
+  "name": "groupi_cs3203_spring2026",
+  "version": "1.0.0",
+  "description": "A collaborative group management platform designed to streamline task coordination, role assignment, deadline management, and team scheduling.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026/issues"
+  },
+  "homepage": "https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026#readme",
+  "devDependencies": {
+    "jest": "^30.3.0"
+  }
+}
