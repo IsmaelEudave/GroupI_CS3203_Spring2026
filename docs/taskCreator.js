@@ -153,11 +153,11 @@ export function initTaskCreator(containerId) {
         <div class="task-dot dot-${t.priority}"></div>
         <div class="task-info">
           <div class="task-title">${t.title}<span class="task-badge badge-${t.priority}">${t.priority}</span></div>
-          <div class="task-meta">${t.category}${t.date ? ' · ' + formatDate(t.date) : ''}${t.time ? ' at ' + t.time : ''}${' · ' + formatDur(t.duration)}${t.notes ? ' · ' + t.notes.substring(0,40) + (t.notes.length > 40 ? '…' : '') : ''}</div>
+          <div class="task-meta">${t.category}${t.date ? ' &middot; ' + formatDate(t.date) : ''}${t.time ? ' at ' + t.time : ''}${' &middot; ' + formatDur(t.duration)}${t.notes ? ' &middot; ' + t.notes.substring(0,40) + (t.notes.length > 40 ? '&hellip;' : '') : ''}</div>
         </div>
         <div class="task-actions">
-          <button class="task-btn share" data-id="${t.id}" title="Share task">→</button>
-          <button class="task-btn remove" data-id="${t.id}" title="Remove task">×</button>
+          <button class="task-btn share" data-id="${t.id}" title="Share task">&rarr;</button>
+          <button class="task-btn remove" data-id="${t.id}" title="Remove task">&times;</button>
         </div>
       </div>
     `).join('');

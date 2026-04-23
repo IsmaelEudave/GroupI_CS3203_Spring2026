@@ -71,9 +71,9 @@ class CommunicationService {
     const modal = document.createElement('div');
     modal.className = 'comm-modal';
 
-    modal.innerHTML = \`
+    modal.innerHTML = `
       <h2 class="comm-modal-title">Share Task</h2>
-      <p class="comm-modal-subtitle">Sharing: <strong>\${this._escapeHtml(taskTitle)}</strong></p>
+      <p class="comm-modal-subtitle">Sharing: <strong>${this._escapeHtml(taskTitle)}</strong></p>
       
       <div class="comm-field">
         <label class="comm-label">Team Member Email</label>
@@ -84,7 +84,7 @@ class CommunicationService {
         <button class="comm-btn-cancel" id="comm-cancel-btn">Cancel</button>
         <button class="comm-btn-submit" id="comm-submit-btn">Send Invite</button>
       </div>
-    \`;
+    `;
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
@@ -124,7 +124,7 @@ class CommunicationService {
     localStorage.setItem('taskLU_sharedTasks', JSON.stringify(this.sharedTasks));
     console.log('[CommunicationService] Task shared successfully:', shareRecord);
     // In Phase 4 we will add UI confirmation feedback. For now, alert works.
-    alert(\`Task "\${taskObj.title}" shared with \${email}\`);
+    alert(`Task "${taskObj.title}" shared with ${email}`);
   }
 
   _escapeHtml(unsafe) {
