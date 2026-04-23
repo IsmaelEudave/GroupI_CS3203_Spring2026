@@ -123,8 +123,27 @@ class CommunicationService {
     this.sharedTasks.push(shareRecord);
     localStorage.setItem('taskLU_sharedTasks', JSON.stringify(this.sharedTasks));
     console.log('[CommunicationService] Task shared successfully:', shareRecord);
-    // In Phase 4 we will add UI confirmation feedback. For now, alert works.
-    alert(`Task "${taskObj.title}" shared with ${email}`);
+    
+    // Format mailto link to open default email client
+    const subject = encodeURIComponent(`TaskLU: You've been assigned a task!`);
+    const taskStatus = taskObj.status || taskObj.category || 'Pending';
+    const taskDate = taskObj.date ? `\nDue Date: ${taskObj.date}` : '';
+    
+    const body = encodeURIComponent(
+`Hello,
+
+You have been shared a task from TaskLU.
+
+--- TASK DETAILS ---
+Title: ${taskObj.title || taskObj.text || 'Untitled Task'}
+Status: ${taskStatus}${taskDate}
+--------------------
+
+Please log in to your TaskLU dashboard to view more details!
+`);
+    
+    const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
+    window.location.href = mailtoUrl;
   }
 
   _escapeHtml(unsafe) {
