@@ -1,4 +1,6 @@
 // taskCreator.js
+import { communicationService } from './communicationService.js';
+
 
 // 1. ISOLATED CSS
 const taskCreatorCSS = `
@@ -33,7 +35,11 @@ const taskCreatorCSS = `
   .tc-container .badge-low { background: #EAF3DE; color: #3B6D11; }
   .tc-container .badge-medium { background: #FAEEDA; color: #854F0B; }
   .tc-container .badge-high { background: #FCEBEB; color: #A32D2D; }
-  .tc-container .remove-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 16px; padding: 0 2px; line-height: 1; }
+  .tc-container .task-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .tc-container .task-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 16px; padding: 0 2px; line-height: 1; transition: color 0.15s; }
+  .tc-container .task-btn.remove:hover { color: #e05a5a; }
+  .tc-container .task-btn.share { font-size: 14px; margin-top: 1px; }
+  .tc-container .task-btn.share:hover { color: #e8b84b; }
   .tc-container .empty { font-size: 13px; color: #888; text-align: center; padding: 1rem 0; }
 `;
 
@@ -149,16 +155,32 @@ export function initTaskCreator(containerId) {
           <div class="task-title">${t.title}<span class="task-badge badge-${t.priority}">${t.priority}</span></div>
           <div class="task-meta">${t.category}${t.date ? ' · ' + formatDate(t.date) : ''}${t.time ? ' at ' + t.time : ''}${' · ' + formatDur(t.duration)}${t.notes ? ' · ' + t.notes.substring(0,40) + (t.notes.length > 40 ? '…' : '') : ''}</div>
         </div>
-        <button class="remove-btn" data-id="${t.id}">×</button>
+        <div class="task-actions">
+          <button class="task-btn share" data-id="${t.id}" title="Share task">→</button>
+          <button class="task-btn remove" data-id="${t.id}" title="Remove task">×</button>
+        </div>
       </div>
     `).join('');
 
     // Attach delete listeners
-    container.querySelectorAll('.remove-btn').forEach(btn => {
+    container.querySelectorAll('.task-btn.remove').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const id = Number(e.target.dataset.id);
         tasks = tasks.filter(t => t.id !== id);
         renderTasks();
+      });
+    });
+
+    // Attach share listeners
+    container.querySelectorAll('.task-btn.share').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = Number(e.target.dataset.id);
+        const task = tasks.find(t => t.id === id);
+        if (task) {
+          communicationService.promptShare(task.title, (email) => {
+            communicationService.shareTaskToEmail(task, email);
+          });
+        }
       });
     });
   }

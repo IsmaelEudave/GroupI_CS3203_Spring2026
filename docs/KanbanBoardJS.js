@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { communicationService } from "./communicationService.js";
 
 // ─── Styles ────────────────────────────────────────────────────────────────
 const STYLES = `
@@ -162,7 +163,13 @@ const STYLES = `
     flex: 1;
   }
 
-  .kb-card-delete {
+  .kb-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-top: -1px;
+  }
+  .kb-card-btn {
     background: none;
     border: none;
     color: #444;
@@ -171,10 +178,10 @@ const STYLES = `
     line-height: 1;
     padding: 0;
     transition: color 0.12s;
-    flex-shrink: 0;
-    margin-top: -1px;
   }
-  .kb-card-delete:hover { color: #e05a5a; }
+  .kb-card-btn.delete:hover { color: #e05a5a; }
+  .kb-card-btn.share { font-size: 0.9rem; margin-top: 1px; }
+  .kb-card-btn.share:hover { color: #e8b84b; }
 
   .kb-card-desc {
     font-size: 0.77rem;
@@ -491,11 +498,20 @@ export default function KanbanBoard() {
               },
                 React.createElement("div", { className: "kb-card-top" },
                   React.createElement("span", { className: "kb-card-title" }, task.title),
-                  React.createElement("button", {
-                    className: "kb-card-delete",
-                    onClick: () => deleteTask(task.id),
-                    title: "Delete task",
-                  }, "\u00D7")
+                  React.createElement("div", { className: "kb-card-actions" },
+                    React.createElement("button", {
+                      className: "kb-card-btn share",
+                      onClick: () => communicationService.promptShare(task.title, (email) => {
+                        communicationService.shareTaskToEmail(task, email);
+                      }),
+                      title: "Share task",
+                    }, "\u2192"), // Right arrow
+                    React.createElement("button", {
+                      className: "kb-card-btn delete",
+                      onClick: () => deleteTask(task.id),
+                      title: "Delete task",
+                    }, "\u00D7")
+                  )
                 ),
                 task.description
                   ? React.createElement("p", { className: "kb-card-desc" }, task.description)
