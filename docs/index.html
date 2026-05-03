@@ -1,92 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskLU Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- CONFIG: Set the web page title here -->
-    <title>TaskLU - Team Dashboard</title>
-    <style>
-        /* CONFIG: General page appearance */
-        body {
-            margin: 2rem;
-            line-height: 1.6;
-            background-color: #5daaf7; /* Light gray background */
-            color: #333; /* Dark gray text */
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        }
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18",
+        "react-dom/client": "https://esm.sh/react-dom@18/client"
+      }
+    }
+  </script>
 
-        h1 {
-            color: #2a549d; /* Brand color for the heading */
-        }
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* CONFIG: Button styling */
-        button {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #264653;
-            color: rgb(148, 135, 135);
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
+    body {
+      background: #0f0f11;
+      color: white;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
-        button:hover {
-            background-color: #2a9d8f;
-        }
+    /* ── Top nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 0.5px solid #2a2a30;
+      background: #16161a;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e8b84b;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #666;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 0.5px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { color: #ccc; background: #1e1e24; }
+    .nav-link.active {
+      color: #e8b84b;
+      border-color: #e8b84b44;
+      background: #e8b84b0d;
+    }
 
-        /* CONFIG: Team list layout */
-        #names-list {
-            margin-top: 1.5rem;
-            padding-left: 0;
-            list-style-type: none; /* Removes default bullet points */
-        }
+    /* ── Dashboard grid ── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 20px;
+      padding: 20px;
+      flex: 1;
+      overflow: hidden;
+    }
 
-        /* CONFIG: Reusable class for team members */
-        .member-item {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-    </style>
+    .feature-container {
+      background: #16161a;
+      border: 0.5px solid #2a2a30;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #feature-task-creator { grid-column: 1; grid-row: 1 / -1; }
+    #feature-kanban       { grid-column: 2; grid-row: 1; }
+    #feature-ai-overview  { grid-column: 2; grid-row: 2; padding: 14px 18px; }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        overflow-y: auto;
+      }
+      #feature-task-creator,
+      #feature-kanban,
+      #feature-ai-overview { grid-column: auto; grid-row: auto; }
+    }
+  </style>
 </head>
-
 <body>
 
-    <h1>Way to go guys!</h1>
-    
-    <p>CI/CD Midterm was successful!</p>
+  <nav>
+    <span class="nav-brand">TaskLU</span>
+    <div class="nav-links">
+      <a href="./index.html" class="nav-link active">Dashboard</a>
+      <a href="./calendar.html" class="nav-link">Calendar</a>
+      <a href="./focus-mode.html" class="nav-link">Focus Mode</a>
+    </div>
+  </nav>
 
-    <button onclick="toggleNames()">Show Names</button>
+  <div class="dashboard-grid">
+    <div id="feature-ai-overview" class="feature-container feature-ai"></div>
+    <div id="feature-task-creator" class="feature-container"></div>
+    <div id="feature-kanban" class="feature-container"></div>
+  </div>
 
-    <ul id="names-list" style="display: none;">
-        <li class="member-item" style="color: #e63946;">Owen</li>
-        <li class="member-item" style="color: rgb(35, 137, 37);">Aiden</li>
-        <li class="member-item" style="color: #285650;">Cale</li>
-        <li class="member-item" style="color: #e63946;">Ava</li>
-        <li class="member-item" style="color: rgb(183, 226, 10);">Zac</li>
-        <li class="member-item" style="color: #b91796;">Ismael</li>
-        <li class="member-item" style="color: #000000;">Landen</li>
-        <li class="member-item" style="color: rgb(137, 101, 35);">Akshay</li>
-    </ul>
-
-    <script>
-        /**
-         * CONFIG: This function controls the visibility of the list.
-         * You can change the button text here.
-         */
-        function toggleNames() {
-            const list = document.getElementById('names-list');
-            const button = document.querySelector('button');
-            const isHidden = list.style.display === 'none';
-
-            // Switch display state
-            list.style.display = isHidden ? 'block' : 'none';
-            
-            // Switch button label
-            button.textContent = isHidden ? 'Hide Names' : 'Show Names';
-        }
-    </script>
+  <script type="module" src="./taskCreator.js"></script>
+  <script type="module" src="./main.js"></script>
+  <script type="module" src="./aiOverview.js"></script>
 
 </body>
 </html>
