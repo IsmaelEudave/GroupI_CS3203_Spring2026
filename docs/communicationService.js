@@ -1,5 +1,11 @@
 // communicationService.js
 
+export const ROLES = {
+  TASK_OWNER: 0,
+  TASK_PARTICIPANT: 1,
+  ANONYMOUS: 'ANONYMOUS'
+};
+
 /**
  * Communication Service (Phase 1)
  * Provides infrastructure for sharing and transferring tasks via email.
@@ -9,6 +15,23 @@ class CommunicationService {
   constructor() {
     this.sharedTasks = JSON.parse(localStorage.getItem('taskLU_sharedTasks')) || [];
     this._injectModalStyles();
+  }
+
+  authorizeUser(currentUser, requiredLevel) {
+    // 1. Identify the user's role
+    const userRole = (currentUser && currentUser.role !== undefined) ? currentUser.role : ROLES.ANONYMOUS;
+
+    // 2. The "Power User" check
+    if (userRole === ROLES.TASK_OWNER) {
+      return 'ALLOW_ACCESS';
+    }
+
+    // 3. Strict Boundary Enforcement
+    if (userRole >= requiredLevel) {
+      return 'ALLOW_ACCESS';
+    } else {
+      return new Error('403: Forbidden - Insufficient Permissions');
+    }
   }
 
   _injectModalStyles() {
