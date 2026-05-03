@@ -3,18 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TaskLU Dashboard</title>
+  <title>Calendar — TaskLU</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-  <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18",
-        "react-dom/client": "https://esm.sh/react-dom@18/client"
-      }
-    }
-  </script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,9 +14,9 @@
       background: #0f0f11;
       color: white;
       font-family: 'DM Mono', 'Courier New', monospace;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
 
     /* ── Top nav ── */
@@ -36,7 +27,6 @@
       padding: 14px 24px;
       border-bottom: 0.5px solid #2a2a30;
       background: #16161a;
-      flex-shrink: 0;
     }
     .nav-brand {
       font-size: 13px;
@@ -68,38 +58,46 @@
       background: #e8b84b0d;
     }
 
-    /* ── Dashboard grid ── */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      grid-template-rows: 1fr auto;
-      gap: 20px;
-      padding: 20px;
+    /* ── Page layout ── */
+    main {
       flex: 1;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 28px 40px;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
     }
 
-    .feature-container {
+    .page-header {
+      margin-bottom: 24px;
+    }
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: white;
+    }
+    .page-header p {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Calendar panel ── */
+    .calendar-panel {
       background: #16161a;
       border: 0.5px solid #2a2a30;
-      border-radius: 12px;
-      padding: 20px;
-      overflow-y: auto;
+      border-radius: 14px;
+      padding: 28px;
+      flex: 1;
     }
 
-    #feature-task-creator { grid-column: 1; grid-row: 1 / -1; }
-    #feature-kanban       { grid-column: 2; grid-row: 1; }
-    #feature-ai-overview  { grid-column: 2; grid-row: 2; padding: 14px 18px; }
-
-    @media (max-width: 900px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        overflow-y: auto;
-      }
-      #feature-task-creator,
-      #feature-kanban,
-      #feature-ai-overview { grid-column: auto; grid-row: auto; }
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      .calendar-panel { padding: 16px; }
     }
   </style>
 </head>
@@ -108,21 +106,22 @@
   <nav>
     <span class="nav-brand">TaskLU</span>
     <div class="nav-links">
-      <a href="./index.html" class="nav-link active">Dashboard</a>
-      <a href="./calendar.html" class="nav-link">Calendar</a>
-      <a href="./focus-mode.html" class="nav-link">Focus Mode</a>
+      <a href="./index.html" class="nav-link">Dashboard</a>
+      <a href="./calendar.html" class="nav-link active">Calendar</a>
     </div>
   </nav>
 
-  <div class="dashboard-grid">
-    <div id="feature-ai-overview" class="feature-container feature-ai"></div>
-    <div id="feature-task-creator" class="feature-container"></div>
-    <div id="feature-kanban" class="feature-container"></div>
-  </div>
+  <main>
+    <div class="page-header">
+      <h1>Calendar</h1>
+      <p>Click any date to add or manage events.</p>
+    </div>
+    <div class="calendar-panel">
+      <div id="feature-calendar"></div>
+    </div>
+  </main>
 
-  <script type="module" src="./taskCreator.js"></script>
-  <script type="module" src="./main.js"></script>
-  <script type="module" src="./aiOverview.js"></script>
+  <script type="module" src="./calendarWidget.js"></script>
 
 </body>
 </html>

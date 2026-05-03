@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager — Unit Tests</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f9f9f7; color: #1a1a18; padding: 2rem; }
+    h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 2rem; }
+    .suite { margin-bottom: 2rem; }
+    .suite-title { font-size: 14px; font-weight: 500; color: #555; margin-bottom: 8px; border-bottom: 0.5px solid #e0e0dc; padding-bottom: 6px; }
+    .test { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-radius: 8px; margin-bottom: 4px; font-size: 14px; }
+    .test.pass { background: #eaf3de; }
+    .test.fail { background: #fcebeb; }
+    .icon { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
+    .pass .icon::before { content: "✓"; color: #3b6d11; }
+    .fail .icon::before { content: "✗"; color: #a32d2d; }
+    .test-name { flex: 1; color: #2c2c2a; }
+    .fail .test-name { color: #a32d2d; }
+    .error-msg { font-size: 12px; color: #a32d2d; margin-top: 3px; font-family: monospace; }
+    .summary { background: #fff; border: 0.5px solid #e0e0dc; border-radius: 10px; padding: 1rem 1.25rem; display: flex; gap: 2rem; margin-bottom: 2rem; }
+    .stat { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 500; }
+    .stat-label { font-size: 12px; color: #888; margin-top: 2px; }
+    .pass-num { color: #3b6d11; }
+    .fail-num { color: #a32d2d; }
+    .total-num { color: #185fa5; }
+  </style>
+</head>
+<body>
+
+<h1>Task Manager — Unit Tests</h1>
+<p class="subtitle">Testing formatDate, formatDur, addTask / removeTask, setPriority, clearForm logic</p>
+
+<div id="summary" class="summary"></div>
+<div id="output"></div>
+
+<script>
+
+
+/*UI was generated, should just be able to open this file and see output of Test functions*/
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[+m - 1]} ${+day}`;
+}
+
+function formatDur(d) {
+  if (d === 'all-day') return 'All day';
+  const n = +d;
+  return n < 60 ? `${n}m` : n === 60 ? '1 hr' : `${n / 60} hr`;
+}
+
+/**/
+
+function makeTaskStore() {
+  let tasks = [];
+  let priority = 'medium';
+  let nextId = 1;
+
+  function setPriority(p) { priority = p; }
+  function getPriority() { return priority; }
+
+  function addTask(title, date, time, duration, category, notes) {
+    if (!title.trim()) return false;
+    tasks.unshift({ id: nextId++, title: title.trim(), date, time, duration, category, priority, notes });
+    return true;
+  }
+
+  function removeTask(id) { tasks = tasks.filter(t => t.id !== id); }
+  function getTasks() { return tasks; }
+  function clear() { tasks = []; priority = 'medium'; }
+
+  return { setPriority, getPriority, addTask, removeTask, getTasks, clear };
+}
+/* Test framework */
+
+const suites = [];
+let currentSuite = null;
+
+function describe(name, fn) {
+  currentSuite = { name, tests: [] };
+  suites.push(currentSuite);
+  fn();
+}
+
+function it(name, fn) {
+  try {
+    fn();
+    currentSuite.tests.push({ name, pass: true });
+  } catch (e) {
+    currentSuite.tests.push({ name, pass: false, error: e.message });
+  }
+}
+
+function expect(actual) {
+  return {
+    toBe(expected) {
+      if (actual !== expected)
+        throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+    },
+    toEqual(expected) {
+      if (JSON.stringify(actual) !== JSON.stringify(expected))
+        throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+    },
+    toBeTruthy() {
+      if (!actual) throw new Error(`Expected truthy, got ${JSON.stringify(actual)}`);
+    },
+    toBeFalsy() {
+      if (actual) throw new Error(`Expected falsy, got ${JSON.stringify(actual)}`);
+    },
+    toContain(val) {
+      if (typeof actual === 'string') {
+        if (!actual.includes(val)) throw new Error(`Expected "${actual}" to contain "${val}"`);
+      } else if (Array.isArray(actual)) {
+        if (!actual.includes(val)) throw new Error(`Expected array to contain ${JSON.stringify(val)}`);
+      } else {
+        throw new Error('toContain only works on strings and arrays');
+      }
+    },
+    toHaveLength(n) {
+      if (actual.length !== n)
+        throw new Error(`Expected length ${n}, got ${actual.length}`);
+    },
+    toBeGreaterThan(n) {
+      if (!(actual > n)) throw new Error(`Expected ${actual} > ${n}`);
+    }
+  };
+}
+
+/* ─── Tests ─── */
+
+describe('formatDate', () => {
+  it('formats a standard date correctly', () => {
+    expect(formatDate('2024-01-15')).toBe('Jan 15');
+  });
+
+  it('formats single-digit days without leading zero', () => {
+    expect(formatDate('2024-03-05')).toBe('Mar 5');
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(formatDate('')).toBe('');
+  });
+
+  it('returns empty string for null/undefined', () => {
+    expect(formatDate(null)).toBe('');
+    expect(formatDate(undefined)).toBe('');
+  });
+
+  it('formats December correctly', () => {
+    expect(formatDate('2024-12-31')).toBe('Dec 31');
+  });
+
+  it('formats all 12 months', () => {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    months.forEach((m, i) => {
+      const mm = String(i + 1).padStart(2, '0');
+      expect(formatDate(`2024-${mm}-01`)).toBe(`${m} 1`);
+    });
+  });
+});
+
+describe('formatDur', () => {
+  it('returns "All day" for all-day value', () => {
+    expect(formatDur('all-day')).toBe('All day');
+  });
+
+  it('shows minutes for durations under 1 hour', () => {
+    expect(formatDur('15')).toBe('15m');
+    expect(formatDur('30')).toBe('30m');
+    expect(formatDur('45')).toBe('45m');
+  });
+
+  it('shows "1 hr" for exactly 60 minutes', () => {
+    expect(formatDur('60')).toBe('1 hr');
+  });
+
+  it('shows decimal hours for durations over 1 hour', () => {
+    expect(formatDur('90')).toBe('1.5 hr');
+    expect(formatDur('120')).toBe('2 hr');
+  });
+
+  it('works with numeric input', () => {
+    expect(formatDur(30)).toBe('30m');
+    expect(formatDur(60)).toBe('1 hr');
+  });
+});
+
+describe('addTask', () => {
+  it('adds a task and returns true', () => {
+    const store = makeTaskStore();
+    const result = store.addTask('Write tests', '2024-01-15', '09:00', '60', 'Task', '');
+    expect(result).toBeTruthy();
+    expect(store.getTasks()).toHaveLength(1);
+  });
+
+  it('rejects empty title and returns false', () => {
+    const store = makeTaskStore();
+    const result = store.addTask('', '2024-01-15', '09:00', '60', 'Task', '');
+    expect(result).toBeFalsy();
+    expect(store.getTasks()).toHaveLength(0);
+  });
+
+  it('rejects whitespace-only title', () => {
+    const store = makeTaskStore();
+    const result = store.addTask('   ', '2024-01-15', '09:00', '60', 'Task', '');
+    expect(result).toBeFalsy();
+    expect(store.getTasks()).toHaveLength(0);
+  });
+
+  it('trims title whitespace', () => {
+    const store = makeTaskStore();
+    store.addTask('  Review PR  ', '', '', '60', 'Task', '');
+    expect(store.getTasks()[0].title).toBe('Review PR');
+  });
+
+  it('adds tasks in reverse order (newest first)', () => {
+    const store = makeTaskStore();
+    store.addTask('First task', '', '', '60', 'Task', '');
+    store.addTask('Second task', '', '', '60', 'Task', '');
+    expect(store.getTasks()[0].title).toBe('Second task');
+    expect(store.getTasks()[1].title).toBe('First task');
+  });
+
+  it('stores all provided fields', () => {
+    const store = makeTaskStore();
+    store.addTask('Standup', '2024-06-01', '09:30', '30', 'Meeting', 'Daily sync');
+    const t = store.getTasks()[0];
+    expect(t.title).toBe('Standup');
+    expect(t.date).toBe('2024-06-01');
+    expect(t.time).toBe('09:30');
+    expect(t.duration).toBe('30');
+    expect(t.category).toBe('Meeting');
+    expect(t.notes).toBe('Daily sync');
+  });
+
+  it('assigns a numeric id', () => {
+    const store = makeTaskStore();
+    store.addTask('Task', '', '', '60', 'Task', '');
+    expect(store.getTasks()[0].id).toBeGreaterThan(0);
+  });
+});
+
+describe('removeTask', () => {
+  it('removes a task by id', () => {
+    const store = makeTaskStore();
+    store.addTask('Task A', '', '', '60', 'Task', '');
+    store.addTask('Task B', '', '', '60', 'Task', '');
+    const id = store.getTasks()[0].id;
+    store.removeTask(id);
+    expect(store.getTasks()).toHaveLength(1);
+    expect(store.getTasks()[0].title).toBe('Task A');
+  });
+
+  it('does nothing if id does not exist', () => {
+    const store = makeTaskStore();
+    store.addTask('Task A', '', '', '60', 'Task', '');
+    store.removeTask(99999);
+    expect(store.getTasks()).toHaveLength(1);
+  });
+
+  it('can remove all tasks one by one', () => {
+    const store = makeTaskStore();
+    store.addTask('A', '', '', '60', 'Task', '');
+    store.addTask('B', '', '', '60', 'Task', '');
+    const ids = store.getTasks().map(t => t.id);
+    ids.forEach(id => store.removeTask(id));
+    expect(store.getTasks()).toHaveLength(0);
+  });
+});
+
+describe('setPriority', () => {
+  it('defaults to "medium"', () => {
+    const store = makeTaskStore();
+    expect(store.getPriority()).toBe('medium');
+  });
+
+  it('sets priority to low', () => {
+    const store = makeTaskStore();
+    store.setPriority('low');
+    expect(store.getPriority()).toBe('low');
+  });
+
+  it('sets priority to high', () => {
+    const store = makeTaskStore();
+    store.setPriority('high');
+    expect(store.getPriority()).toBe('high');
+  });
+
+  it('priority is stored on tasks when added', () => {
+    const store = makeTaskStore();
+    store.setPriority('high');
+    store.addTask('Urgent', '', '', '60', 'Task', '');
+    expect(store.getTasks()[0].priority).toBe('high');
+  });
+
+  it('each task captures priority at time of creation', () => {
+    const store = makeTaskStore();
+    store.setPriority('low');
+    store.addTask('Low priority task', '', '', '60', 'Task', '');
+    store.setPriority('high');
+    store.addTask('High priority task', '', '', '60', 'Task', '');
+    expect(store.getTasks()[0].priority).toBe('high');
+    expect(store.getTasks()[1].priority).toBe('low');
+  });
+});
+
+/*UI was generated*/
+
+let totalPass = 0, totalFail = 0;
+const output = document.getElementById('output');
+
+suites.forEach(suite => {
+  const div = document.createElement('div');
+  div.className = 'suite';
+  div.innerHTML = `<div class="suite-title">${suite.name}</div>`;
+
+  suite.tests.forEach(t => {
+    totalPass += t.pass ? 1 : 0;
+    totalFail += t.pass ? 0 : 1;
+    const el = document.createElement('div');
+    el.className = `test ${t.pass ? 'pass' : 'fail'}`;
+    el.innerHTML = `
+      <span class="icon"></span>
+      <span class="test-name">${t.name}${t.error ? `<div class="error-msg">${t.error}</div>` : ''}</span>
+    `;
+    div.appendChild(el);
+  });
+
+  output.appendChild(div);
+});
+
+const total = totalPass + totalFail;
+document.getElementById('summary').innerHTML = `
+  <div class="stat"><div class="stat-num total-num">${total}</div><div class="stat-label">total</div></div>
+  <div class="stat"><div class="stat-num pass-num">${totalPass}</div><div class="stat-label">passed</div></div>
+  <div class="stat"><div class="stat-num fail-num">${totalFail}</div><div class="stat-label">failed</div></div>
+`;
+</script>
+</body>
+</html>

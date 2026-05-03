@@ -1,0 +1,3 @@
+1. Download the test unit html file from the repo.
+2. Open file with a browser of your choice (I tested it with firefox, chrome, and edge)
+3. UI should show the test ran, the amount passed, and amount failed.

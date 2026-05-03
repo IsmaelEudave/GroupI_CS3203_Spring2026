@@ -1,67 +1,41 @@
-# Task Insights Dashboard - Test Instructions
+# Guide to Running Tests
 
-This file explains how to run the unit tests for the Task Insights Dashboard feature.
+## Prerequisites
 
-## Step 1 — Clone the Repository
+- Git installed on your machine.
+- The latest version of Python is installed on your local machine
 
-Open a terminal and run the following commands:
+## Cloning the Feature Repository into your Local Machine
 
-git clone https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026
+The first step is to clone the repository to your local machine. The steps are listed below:
 
-cd GroupI_CS3203_Spring2026
+1. Create a new folder that you want to store the project in. 
 
-git checkout task-insights-dashboard
+2. Navigate into this folder and then open your terminal
 
-## Step 2 — Dependencies
+    - On Windows 11, right click the folder, select "Show more options", then select "Open in Terminal".
 
-Make sure you have the following installed:
+    - On MacOS, right click the folder, hold the Option key, then select "New Terminal at Folder".
 
-- Node.js (recommended LTS version)
-- npm (comes with Node.js)
+3. Run the following command with the folder named created in step 1, 
 
-If Node.js is not installed, download it from:
-https://nodejs.org
+    ```bash
+    git clone -b feature/cale-communicationFeature --single-branch https://github.com/IsmaelEudave/GroupI_CS3203_Spring2026.git
+    ```
 
-## Step 3 — Install Dependencies
+4. Navigate into the newly created ``GroupI_CS3203_Spring2026`` folder in the directory created in step 1.
 
-Run the following command to install required packages:
+## Executing the Tests
 
-npm install
+1. Ensure that you are in the root directory of the project.
 
-## Step 4 — Run Unit Tests
+2. Run the following command.
 
-Run the following command:
+    ```bash
+    python3 test_message_service.py
+    ```
+    *(Note: On Windows, you can also use `python test_message_service.py`)*
 
-npm test
+## Questions or Concerns?
 
-After running, you should see output showing that all tests passed.
-
-## File Location
-
-All dashboard-related files are located in:
-
-docs/dashboard/
-
-- dashboard.html → Main dashboard UI  
-- dashboardLogic.js → Core logic functions  
-- dashboardLogic.test.js → Unit tests  
-
-## Test Coverage
-
-The following functionality is tested:
-
-- Completion percentage calculation  
-- Task status counting  
-- Filtering by team member  
-- Filtering by task status  
-- Due this week logic  
-- Overdue task detection  
-
-## Unit Test File
-
-docs/dashboard/dashboardLogic.test.js
-
-## Notes
-
-- If the terminal says "No tests found", press the "a" key to run all tests.
-- If npm is not recognized, reinstall Node.js and restart the terminal.
+If you have any questions or concerns, please contact Cale Bible at cbible@ou.edu or Discord handle @cale7652
