@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskLU Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18",
+        "react-dom/client": "https://esm.sh/react-dom@18/client"
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f0f11;
+      color: white;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ── Top nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 0.5px solid #2a2a30;
+      background: #16161a;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e8b84b;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #666;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 0.5px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { color: #ccc; background: #1e1e24; }
+    .nav-link.active {
+      color: #e8b84b;
+      border-color: #e8b84b44;
+      background: #e8b84b0d;
+    }
+
+    /* ── Dashboard grid ── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 20px;
+      padding: 20px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .feature-container {
+      background: #16161a;
+      border: 0.5px solid #2a2a30;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #feature-task-creator { grid-column: 1; grid-row: 1 / -1; }
+    #feature-kanban       { grid-column: 2; grid-row: 1; }
+    #feature-ai-overview  { grid-column: 2; grid-row: 2; padding: 14px 18px; }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        overflow-y: auto;
+      }
+      #feature-task-creator,
+      #feature-kanban,
+      #feature-ai-overview { grid-column: auto; grid-row: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-brand">TaskLU</span>
+    <div class="nav-links">
+      <a href="./index.html" class="nav-link active">Dashboard</a>
+      <a href="./calendar.html" class="nav-link">Calendar</a>
+      <a href="./focus-mode.html" class="nav-link">Focus Mode</a>
+    </div>
+  </nav>
+
+  <div class="dashboard-grid">
+    <div id="feature-ai-overview" class="feature-container feature-ai"></div>
+    <div id="feature-task-creator" class="feature-container"></div>
+    <div id="feature-kanban" class="feature-container"></div>
+  </div>
+
+  <script type="module" src="./taskCreator.js"></script>
+  <script type="module" src="./main.js"></script>
+  <script type="module" src="./aiOverview.js"></script>
+
+</body>
+</html>

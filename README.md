@@ -4,13 +4,24 @@ A collaborative group management platform designed to streamline task coordinati
 
 ## Description/Usage
 
-TaskLU is a group management application built to help teams stay organized, accountable, and aligned. This platform centralizes task management, role assignment, progress tracking, and meeting scheduling in one place, reducing communication errors and missed deadlines. 
+TaskLU is an individual project management application built to help solo users stay organized, accountable, and focused. This platform centralizes personal task management, priority setting, and progress tracking in a single interface, reducing the risk of overlooked details and missed deadlines.
 
-This application addresses common collaboration issues such as unclear responsibilities, fragmented task tracking, and inefficient meeting coordination. By combining structured task workflows with a shared availability calendar, TaskLU enables teams to plan effectively, monitor progress in real time, and make informed scheduling decisions. This makes it especially useful for student project teams, academic groups, and small collaborative teams. 
+The application addresses common personal productivity challenges such as scattered planning, fragmented task tracking, and inefficient time management. By combining structured individual workflows with a dedicated availability calendar, TaskLU enables a user to plan effectively, monitor personal milestones in real time, and make informed scheduling decisions. This makes it an essential tool for individual students, freelancers, and independent professionals seeking to master their own workflows.
 
 ## Getting Started
 
 This project is currently in development. Stay tuned for updates! 
+
+## GitHub Pages Deployment
+
+This repo includes a GitHub Actions workflow that deploys `docs/index.html` to GitHub Pages on every push to `main`.
+
+To enable it in GitHub:
+
+1. Open repository **Settings**.
+2. Go to **Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Push to `main` and wait for the `Deploy Hello Page` workflow to complete.
 
 ### Dependencies
 
@@ -39,46 +50,79 @@ Authors: Ava Batson-Perez, Cale Bible, Ismael Eudave, Zac Freeman, Aiden Isch, L
 
 ## Project Status 
 
-This is an ongoing project in development 
+This is an ongoing project in development.
 
 ## Roadmap
 
-[X] Phase 1 
+- [x] Phase 1 (Current stage)
+	- [ ] TaskCreator: Foundation - Landen Mowdy
+	- [ ] Communication Feature: Create infrastructure for sharing - Cale Bible
+	- [ ] Calendar: Foundation - Aiden Isch
+	- [ ] FocusMode: Implement Focus Mode UI Screen - Ava Batson-Perez
+	- [ ] KanBan: Workflow Setup & Task Creation - Ismael Eudave
+	- [ ] Task Insights Dashboard - Core Metrics Overview - Zac Freeman
+	- [ ] AI Task Progress Summary: Research - Owen Whitaker
+- [ ] Phase 2 
+	- [ ] TaskCreator: UI/UX & Conflict Detection - Landen Mowdy
+	- [ ] Communication Feature: The "Transfer" Action - Cale Bible
+	- [ ] Calendar: Functionality - Aiden Isch
+	- [ ] FocusMode: Build Focus Timer Controls - Ava Batson-Perez
+	- [ ] KanBan: Academic Status & Project Logic - Ismael Eudave
+	- [ ] Task Insights Dashboard - Member & Deadline Insights - Zac Freeman
+	- [ ] AI Task Progress Summary: Ability to Query Model - Owen Whitaker
+- [ ] Phase 3 
+	- [ ] TaskCreator: UI Cleanup & Reoccuring Tasks - Landen Mowdy
+	- [ ] Communication Feature: The "Inbox" View - Cale Bible
+	- [ ] Calendar: Fixing up UI and making things look nice - Aiden Isch
+	- [ ] FocusMode: Add Configurable Focus Duration - Ava Batson-Perez
+	- [ ] KanBan: Visual Progress & Team Assignments - Ismael Eudave
+	- [ ] Task Insights Dashboard: Visual Charts - Zac Freeman
+	- [ ] AI Task Progress Summary: Expose Model to Project - Owen Whitaker
+- [ ] Phase 4 
+	- [ ] TaskCreator: Smart Features & Cleanup - Landen Mowdy
+	- [ ] Communication Feature: The "Confirmation" Feedback - Cale Bible
+	- [ ] Calendar: Bug Fixes and Final Touches - Aiden Isch
+	- [ ] FocusMode: Implement Local State Management for Focus Sessions - Ava Batson-Perez
+	- [ ] KanBan: Final Handover - Ismael Eudave
+	- [ ] Task Insights Dashboard: Interactive Filtering & UI Polish - Zac Freeman
+	- [ ] AI Task Progress Summary: Accurate Summarization - Owen Whitaker
 
-	[ ] Build Sign-up/Login flow 
+## Development Guidelines
 
-	[ ] Set up tables/coolections in back end 
+### Code Quality and Readability
 
-	[ ] Create task that sends strings of text to LLM 
+- Code must follow proper syntax and be free of runtime errors.
+- Code must be clearly commented where logic is non-trivial.
+- Naming conventions must be consistent (camelCase for variables and functions,
+- PascalCase for components/classes).
 
-	[ ] Create UI in Figma 
+### Clear and Meaningful Naming
 
-[ ] Phase 2 
+- Variable and function names must be descriptive, concise, and relevant to their purpose.
+- Names should avoid ambiguity and not be overly similar to existing identifiers.
+- Underscores may be used only where appropriate and consistently.
 
-	[ ] Finish task features (create, read, update, delete) 
+### Feature Completeness
 
-	[ ] Install a calendar library and connect to Events database 
+- Each commit must implement a clearly defined piece of functionality related to an assigned feature.
+- Partial or placeholder functionality must be explicitly labeled as such.
 
-	[ ] Build a chatbox and bubble window 
+### UI & User Interaction (If Applicable)
 
-	[ ] Ensure after event creation, pops into calendar without page refresh 
+- User-facing features must include a visible and usable UI component.
+- UI elements must respond correctly to user input without causing crashes or inconsistent states.
 
-[ ] Phase 3 
+### Independence & Modularity
 
-	[ ] Create a system prompt for user input 
+- Code should not break or modify another team member’s feature without coordination.
+- Feature logic should be modular and reasonably self-contained.
 
-	[ ] Take the prompt output and call functions 
+### Testing & Stability
 
-	[ ] Write a function that checks event overlap 
+- Code must compile/run successfully before being merged.
+- No new warnings, errors, or regressions should be introduced.
 
-	[ ] Chatbox user feedback 
+### Documentation
 
-[ ] Phase 4 
-
-	[ ] Fix Calendar UI for smaller screens 
-
-	[ ] Create Edge Case Handling for AI chatbot 
-
-	[ ] Write the final documentation and prepare presentation 
-
-	[ ] Deploy the platform 
+- Any new feature or major change must be briefly documented in the README or relevant documentation file.
+- Assumptions, limitations, or dependencies must be clearly noted.
