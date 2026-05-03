@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskLU - Modern Task Manager</title>
+    <meta name="description" content="A premium, modern task manager application.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            <button id="inbox-btn" class="inbox-btn" aria-label="Inbox">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>
+                <span id="inbox-badge" class="inbox-badge hidden">0</span>
+            </button>
+            <h1>Task<span class="highlight">LU</span></h1>
+            <p class="subtitle">Organize your day with elegance.</p>
+        </header>
+
+        <main class="main-content">
+            <section class="task-input-section">
+                <form id="task-form">
+                    <div class="input-group">
+                        <input type="text" id="task-input" placeholder="What needs to be done?" autocomplete="off"
+                            required>
+                        <button type="submit" id="add-task-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="task-list-section">
+                <div class="list-header">
+                    <h2>Your Tasks</h2>
+                    <span id="task-count" class="task-count">0 tasks</span>
+                </div>
+                <ul id="task-list" class="task-list">
+                    <!-- Tasks will be injected here via JavaScript -->
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Empty State Template (Hidden by default, cloned in JS) -->
+    <template id="empty-state-template">
+        <div class="empty-state fade-in">
+            <div class="empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h3>All caught up!</h3>
+            <p>Add a new task above to get started.</p>
+        </div>
+    </template>
+
+    <!-- Invite User Modal -->
+    <div id="invite-modal" class="modal-overlay hidden">
+        <div class="modal-content focus-in">
+            <div class="modal-header">
+                <h3>Assign Task</h3>
+                <button id="close-modal-btn" class="close-btn" aria-label="Close modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Select a team member to assign this task or invite someone new.</p>
+                
+                <form id="invite-form" class="invite-form">
+                    <input type="email" id="invite-email-input" placeholder="Invite by email..." required>
+                    <button type="submit" class="invite-submit-btn">Invite</button>
+                </form>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <div id="user-list" class="user-list">
+                    <!-- Users get injected here via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inbox Modal -->
+    <div id="inbox-modal" class="modal-overlay hidden">
+        <div class="modal-content focus-in">
+            <div class="modal-header">
+                <h3>Pending Invites</h3>
+                <button id="close-inbox-btn" class="close-btn" aria-label="Close inbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="inbox-list" class="inbox-list">
+                    <!-- Inbox items injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
