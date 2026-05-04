@@ -1,5 +1,11 @@
 // communicationService.js
 
+export const ROLES = {
+  TASK_OWNER: 0,
+  TASK_PARTICIPANT: 1,
+  ANONYMOUS: 'ANONYMOUS'
+};
+
 /**
  * Communication Service (Phase 1)
  * Provides infrastructure for sharing and transferring tasks via email.
@@ -9,6 +15,64 @@ class CommunicationService {
   constructor() {
     this.sharedTasks = JSON.parse(localStorage.getItem('taskLU_sharedTasks')) || [];
     this._injectModalStyles();
+    this._interceptImportLink();
+  }
+
+  _interceptImportLink() {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const importData = params.get('importTask');
+    
+    if (importData) {
+      try {
+        const decodedString = decodeURIComponent(atob(importData));
+        const taskObj = JSON.parse(decodedString);
+        
+        const importRecord = {
+          id: Date.now(),
+          task: taskObj,
+          sharedWith: 'me (imported)',
+          sharedAt: new Date().toISOString(),
+          isImported: true
+        };
+        
+        this.sharedTasks.push(importRecord);
+        localStorage.setItem('taskLU_sharedTasks', JSON.stringify(this.sharedTasks));
+        console.log('[CommunicationService] Task imported successfully:', importRecord);
+        
+        // Expose globally for UI widgets to add to their lists
+        window.__IMPORTED_TASK = taskObj;
+        if (typeof window !== 'undefined') {
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('taskImported', { detail: taskObj }));
+          }, 100);
+        }
+
+        // Clean URL to prevent re-importing on refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
+        alert(`Successfully imported shared task: "${taskObj.title || taskObj.text || 'Untitled Task'}"`);
+      } catch (err) {
+        console.error('[CommunicationService] Failed to parse imported task:', err);
+        alert('Failed to import task. The link might be broken or corrupted.');
+      }
+    }
+  }
+
+  authorizeUser(currentUser, requiredLevel) {
+    // 1. Identify the user's role
+    const userRole = (currentUser && currentUser.role !== undefined) ? currentUser.role : ROLES.ANONYMOUS;
+
+    // 2. The "Power User" check
+    if (userRole === ROLES.TASK_OWNER) {
+      return 'ALLOW_ACCESS';
+    }
+
+    // 3. Strict Boundary Enforcement
+    if (userRole >= requiredLevel) {
+      return 'ALLOW_ACCESS';
+    } else {
+      return new Error('403: Forbidden - Insufficient Permissions');
+    }
   }
 
   _injectModalStyles() {
@@ -124,6 +188,11 @@ class CommunicationService {
     localStorage.setItem('taskLU_sharedTasks', JSON.stringify(this.sharedTasks));
     console.log('[CommunicationService] Task shared successfully:', shareRecord);
     
+    // Generate Import Link
+    const appUrl = window.location.origin + window.location.pathname;
+    const encodedData = btoa(encodeURIComponent(JSON.stringify(taskObj)));
+    const importLink = `${appUrl}?importTask=${encodedData}`;
+    
     // Format mailto link to open default email client
     const subject = encodeURIComponent(`TaskLU: You've been assigned a task!`);
     const taskStatus = taskObj.status || taskObj.category || 'Pending';
@@ -138,6 +207,9 @@ You have been shared a task from TaskLU.
 Title: ${taskObj.title || taskObj.text || 'Untitled Task'}
 Status: ${taskStatus}${taskDate}
 --------------------
+
+Click the following link to automatically add this task to your TaskLU Dashboard:
+${importLink}
 
 Please log in to your TaskLU dashboard to view more details!
 `);

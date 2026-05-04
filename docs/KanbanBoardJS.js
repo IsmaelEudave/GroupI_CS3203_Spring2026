@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { communicationService } from "./communicationService.js";
 
 // ─── Styles ────────────────────────────────────────────────────────────────
@@ -378,6 +378,42 @@ export default function KanbanBoard() {
   const [defaultCol, setDefaultCol] = useState("todo");
   const [dragId,     setDragId]     = useState(null);
   const [overCol,    setOverCol]    = useState(null);
+  // Handle Imported Tasks
+  useEffect(() => {
+    const loadImportedTasks = () => {
+      const shared = JSON.parse(localStorage.getItem('taskLU_sharedTasks')) || [];
+      const imported = shared.filter(t => t.isImported);
+      
+      if (imported.length > 0) {
+        setTasks(prev => {
+          const newTasks = [...prev];
+          let changed = false;
+          
+          imported.forEach(imp => {
+            const tTitle = imp.task.title || imp.task.text || "Imported Task";
+            // Avoid duplicates by title
+            if (!newTasks.some(t => t.title === tTitle)) {
+              newTasks.push({
+                id: uid(),
+                title: tTitle,
+                description: imp.task.notes || imp.task.description || "",
+                priority: imp.task.priority || "medium",
+                colId: "todo",
+                date: imp.task.date || today()
+              });
+              changed = true;
+            }
+          });
+          
+          return changed ? newTasks : prev;
+        });
+      }
+    };
+
+    loadImportedTasks();
+    window.addEventListener('taskImported', loadImportedTasks);
+    return () => window.removeEventListener('taskImported', loadImportedTasks);
+  }, []);
 
   // ── form state ──
   const emptyForm = { title: "", description: "", priority: "medium", colId: "todo", date: "" };
