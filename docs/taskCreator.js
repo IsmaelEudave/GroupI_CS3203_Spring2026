@@ -121,8 +121,12 @@ export function initTaskCreator(containerId) {
   // Setup Variables
   const MAX_TASKS = 100;
   let priority = 'medium';
-  let tasks = [];
+  let tasks = (() => { try { return JSON.parse(localStorage.getItem('taskLU_tasks')) || []; } catch(e) { return []; } })();
   const today = new Date().toISOString().split('T')[0];
+
+  function saveTasks() {
+    localStorage.setItem('taskLU_tasks', JSON.stringify(tasks));
+  }
   
   // DOM Elements
   const titleInput = document.getElementById('tc-title');
@@ -159,8 +163,8 @@ export function initTaskCreator(containerId) {
       <div class="task-item">
         <div class="task-dot dot-${t.priority}"></div>
         <div class="task-info">
-          <div class="task-title">${t.title}<span class="task-badge badge-${t.priority}">${t.priority}</span></div>
-          <div class="task-meta">${t.category}${t.date ? ' &middot; ' + formatDate(t.date) : ''}${t.time ? ' &middot; ' + t.time : ''}${t.endTime ? '&ndash;' + t.endTime : ''}${t.notes ? ' &middot; ' + t.notes.substring(0,40) + (t.notes.length > 40 ? '&hellip;' : '') : ''}</div>
+          <div class="task-title">${escapeHtml(t.title)}<span class="task-badge badge-${t.priority}">${t.priority}</span></div>
+          <div class="task-meta">${t.category}${t.date ? ' &middot; ' + formatDate(t.date) : ''}${t.time ? ' &middot; ' + t.time : ''}${t.endTime ? '&ndash;' + t.endTime : ''}${t.notes ? ' &middot; ' + escapeHtml(t.notes).substring(0,40) + (t.notes.length > 40 ? '&hellip;' : '') : ''}</div>
         </div>
         <div class="task-actions">
           <button class="task-btn share" data-id="${t.id}" title="Share task">&rarr;</button>
@@ -174,6 +178,7 @@ export function initTaskCreator(containerId) {
       btn.addEventListener('click', (e) => {
         const id = Number(e.target.dataset.id);
         tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
         renderTasks();
       });
     });
@@ -202,6 +207,10 @@ export function initTaskCreator(containerId) {
     setPriority('medium', container.querySelector('.priority-btn.medium'));
   }
 
+  function escapeHtml(str) {
+    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
   function formatDate(d) {
     if (!d) return '';
     const [y,m,day] = d.split('-');
@@ -218,10 +227,11 @@ export function initTaskCreator(containerId) {
     if (tasks.length >= MAX_TASKS) return;
     const title = titleInput.value.trim();
     if (!title) { titleInput.focus(); return; }
-    tasks.unshift({ 
+    tasks.unshift({
       id: Date.now(), title, date: dateInput.value, time: timeInput.value,
-      endTime: endTimeInput.value, category: categorySelect.value, priority, notes: notesInput.value.trim() 
+      endTime: endTimeInput.value, category: categorySelect.value, priority, notes: notesInput.value.trim()
     });
+    saveTasks();
     renderTasks();
     clearForm();
   });
@@ -241,14 +251,19 @@ export function initTaskCreator(containerId) {
       priority: task.priority || "medium",
       notes: task.notes || task.description || ""
     });
+    saveTasks(); // <-- Added to persist the imported task
     renderTasks();
   };
+  
   window.addEventListener('taskImported', (e) => handleImportTC(e.detail));
   if (window.__IMPORTED_TASK && !window.__IMPORTED_TASK_HANDLED_TC) {
     window.__IMPORTED_TASK_HANDLED_TC = true;
     handleImportTC(window.__IMPORTED_TASK);
   }
+
+  renderTasks();
 }
+
 
 // Automatically start the feature and place it in the right box
 initTaskCreator('feature-task-creator');
