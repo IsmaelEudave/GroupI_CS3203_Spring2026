@@ -10,6 +10,7 @@ let isPaused = false;
 // localStorage key for saving session history
 const STORAGE_KEY = "tasklu_focus_history";
 
+// DOM elements
 const taskNameInput = document.getElementById("taskNameInput");
 const hoursInput = document.getElementById("hoursInput");
 const minutesInput = document.getElementById("minutesInput");
@@ -22,6 +23,7 @@ const pauseBtn = document.getElementById("pauseBtn");
 const resumeBtn = document.getElementById("resumeBtn");
 const endBtn = document.getElementById("endBtn");
 const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+
 
 // Converts a number of seconds into MM:SS or HH:MM:SS format
 function formatTime(totalSeconds) {
@@ -36,19 +38,29 @@ function formatTime(totalSeconds) {
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-// Reads the duration inputs and returns total seconds.
+
+// Reads the duration inputs and returns total seconds
 function getDurationInSeconds() {
     const hours = Number(hoursInput.value) || 0;
     const minutes = Number(minutesInput.value) || 0;
     return (hours * 3600) + (minutes * 60);
 }
 
+
+// Cleans user input to keep it simple and safe
+function cleanTaskName(input) {
+    const cleaned = input.trim().slice(0, 80);
+    return cleaned || "General Focus Session";
+}
+
+
 // Updates the timer text shown to the user
 function updateTimerDisplay() {
     timerDisplay.textContent = formatTime(remainingSeconds);
 }
 
-// Enables/disables buttons and inputs based on session state.
+
+// Enables/disables buttons and inputs based on session state
 function updateButtonStates() {
     startBtn.disabled = isSessionActive;
     pauseBtn.disabled = !isSessionActive || isPaused;
@@ -60,7 +72,8 @@ function updateButtonStates() {
     taskNameInput.disabled = isSessionActive;
 }
 
-// While no session is active, changing hours/minutes updates the preview.
+
+// Updates timer preview when inputs change
 function refreshDurationPreview() {
     if (!isSessionActive) {
         remainingSeconds = getDurationInSeconds();
@@ -69,23 +82,26 @@ function refreshDurationPreview() {
     }
 }
 
-// Gets stored session history from localStorage.
+
+// Gets stored session history from localStorage
 function getStoredSessions() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 }
 
-// Saves session history to localStorage.
+
+// Saves session history to localStorage
 function saveStoredSessions(sessions) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
 }
 
-// Logs a completed or ended focus session to localStorage.
+
+// Logs a focus session to storage
 function logSession(status) {
     const completedSeconds = Math.max(0, initialSessionSeconds - remainingSeconds);
 
     const session = {
         id: Date.now(),
-        taskName: taskNameInput.value.trim() || "General Focus Session",
+        taskName: cleanTaskName(taskNameInput.value),
         date: new Date().toLocaleString(),
         plannedSeconds: initialSessionSeconds,
         completedSeconds,
@@ -98,37 +114,90 @@ function logSession(status) {
     renderSessionHistory();
 }
 
-// Renders session history underneath the timer.
+
+// Renders session history safely (prevents XSS)
 function renderSessionHistory() {
     const sessions = getStoredSessions();
 
+    // Clear safely
+    sessionHistory.textContent = "";
+
     if (!sessions.length) {
-        sessionHistory.innerHTML = `<p class="empty-history">No focus sessions logged yet.</p>`;
+        const empty = document.createElement("p");
+        empty.className = "empty-history";
+        empty.textContent = "No focus sessions logged yet.";
+        sessionHistory.appendChild(empty);
         return;
     }
 
-    sessionHistory.innerHTML = sessions.map(session => `
-        <div class="history-item">
-            <div class="history-main">
-                <div class="history-task">${session.taskName}</div>
-                <div class="history-status">${session.status}</div>
-                <div class="history-meta">${session.date}</div>
-            </div>
-            <div class="history-times">
-                <div><strong>Planned:</strong> ${formatTime(session.plannedSeconds)}</div>
-                <div><strong>Logged:</strong> ${formatTime(session.completedSeconds)}</div>
-            </div>
-        </div>
-    `).join("");
+    sessions.forEach(session => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        const main = document.createElement("div");
+        main.className = "history-main";
+
+        const task = document.createElement("div");
+        task.className = "history-task";
+        task.textContent = session.taskName;
+
+        const status = document.createElement("div");
+        status.className = "history-status";
+        status.textContent = session.status;
+
+        const date = document.createElement("div");
+        date.className = "history-meta";
+        date.textContent = session.date;
+
+        const times = document.createElement("div");
+        times.className = "history-times";
+
+        const planned = document.createElement("div");
+        planned.textContent = `Planned: ${formatTime(session.plannedSeconds)}`;
+
+        const logged = document.createElement("div");
+        logged.textContent = `Logged: ${formatTime(session.completedSeconds)}`;
+
+        main.appendChild(task);
+        main.appendChild(status);
+        main.appendChild(date);
+
+        times.appendChild(planned);
+        times.appendChild(logged);
+
+        item.appendChild(main);
+        item.appendChild(times);
+
+        sessionHistory.appendChild(item);
+    });
 }
 
-// Clears all saved session history.
+
+// Clears all saved session history
 function clearHistory() {
     localStorage.removeItem(STORAGE_KEY);
     renderSessionHistory();
 }
 
-// Starts a new focus session.
+
+// Resets session state after completion or stop
+function resetSessionState(message) {
+    isSessionActive = false;
+    isPaused = false;
+
+    remainingSeconds = getDurationInSeconds();
+    initialSessionSeconds = remainingSeconds;
+
+    sessionStatus.textContent = message;
+
+    updateTimerDisplay();
+    updateButtonStates();
+
+    taskNameInput.value = "";
+}
+
+
+// Starts a new focus session
 function startFocusSession() {
     if (isSessionActive) return;
 
@@ -151,7 +220,8 @@ function startFocusSession() {
     timerInterval = setInterval(runTimerTick, 1000);
 }
 
-// Handles the timer countdown.
+
+// Handles timer countdown
 function runTimerTick() {
     if (!isSessionActive || isPaused) return;
 
@@ -161,23 +231,16 @@ function runTimerTick() {
     if (remainingSeconds <= 0) {
         clearInterval(timerInterval);
         timerInterval = null;
-        isSessionActive = false;
-        isPaused = false;
+
         remainingSeconds = 0;
 
-        sessionStatus.textContent = "Focus session complete.";
-        updateTimerDisplay();
-        updateButtonStates();
-
-        // Log the completed session
         logSession("Completed");
-
-        // Clear optional task label for the next session
-        taskNameInput.value = "";
+        resetSessionState("Focus session complete.");
     }
 }
 
-// Pauses the current focus session
+
+// Pauses the session
 function pauseFocusSession() {
     if (!isSessionActive || isPaused) return;
 
@@ -186,7 +249,8 @@ function pauseFocusSession() {
     updateButtonStates();
 }
 
-// Resumes a paused session
+
+// Resumes the session
 function resumeFocusSession() {
     if (!isSessionActive || !isPaused) return;
 
@@ -195,31 +259,20 @@ function resumeFocusSession() {
     updateButtonStates();
 }
 
-// Ends the current session early and logs partial time.
+
+// Ends the session early
 function endFocusSession() {
     if (!isSessionActive) return;
 
     clearInterval(timerInterval);
     timerInterval = null;
 
-    // Log the partial session before resetting state
     logSession("Ended Early");
-
-    isSessionActive = false;
-    isPaused = false;
-
-    remainingSeconds = getDurationInSeconds();
-    initialSessionSeconds = remainingSeconds;
-
-    sessionStatus.textContent = "Session ended.";
-    updateTimerDisplay();
-    updateButtonStates();
-
-    // Clear optional task label for the next session
-    taskNameInput.value = "";
+    resetSessionState("Session ended.");
 }
 
-// Event Listeners
+
+// Event listeners
 hoursInput.addEventListener("input", refreshDurationPreview);
 minutesInput.addEventListener("input", refreshDurationPreview);
 
@@ -229,7 +282,8 @@ resumeBtn.addEventListener("click", resumeFocusSession);
 endBtn.addEventListener("click", endFocusSession);
 clearHistoryBtn.addEventListener("click", clearHistory);
 
-// Initial render of session history on page load
+
+// Initial page setup
 updateTimerDisplay();
 updateButtonStates();
 renderSessionHistory();
