@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Team Insights</title>
+
+  <style>
+    body {
+      background-color: #0f0f12;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 0.5px solid #2a2a30;
+      background: #16161a;
+    }
+
+    .nav-brand {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #e8b84b;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-link {
+      font-family: monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #666;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 0.5px solid transparent;
+    }
+
+    .nav-link:hover {
+      color: #ccc;
+      background: #1e1e24;
+    }
+
+    .nav-link.active {
+      color: #e8b84b;
+      border-color: #e8b84b44;
+      background: #e8b84b0d;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: #8b8b92;
+      font-family: monospace;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: #17171d;
+      border: 1px solid #2a2a33;
+      border-radius: 20px;
+      padding: 25px;
+    }
+
+    .filters, .manual-add {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    select, input, button {
+      background-color: #101014;
+      color: #f5f5f5;
+      border: 1px solid #2a2a33;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    button {
+      background-color: #e8b84b;
+      color: #101014;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #f0c04f;
+    }
+
+    .delete-btn {
+      background-color: #ff6b6b;
+      color: white;
+      padding: 6px 10px;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .metric-box {
+      background-color: #101014;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .metric-box span {
+      display: block;
+      color: #8b8b92;
+      font-size: 14px;
+    }
+
+    .metric-box strong {
+      display: block;
+      font-size: 26px;
+      color: #f0c04f;
+      margin-top: 5px;
+    }
+
+    .risk-high { color: #ff6b6b !important; }
+    .risk-medium { color: #f0c04f !important; }
+    .risk-low { color: #6fdc8c !important; }
+
+    .urgent-overdue { color: #ff6b6b; }
+    .urgent-very-soon { color: #ff9f43; }
+    .urgent-today { color: #f0c04f; }
+    .urgent-upcoming { color: #6fdc8c; }
+    .urgent-later { color: #8b8b92; }
+
+    hr {
+      border: none;
+      border-top: 1px solid #2a2a33;
+      margin: 20px 0;
+    }
+
+    .section-title {
+      color: #f0c04f;
+      margin-bottom: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .workload-item {
+      background-color: #101014;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #2a2a33;
+    }
+
+    .workload-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+
+    .deadline-detail {
+      font-size: 12px;
+      color: #aaa;
+      margin: 5px 0;
+      padding-left: 8px;
+    }
+
+    .bar-container {
+      height: 10px;
+      background-color: #2a2a33;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar {
+      height: 100%;
+      background-color: #e8b84b;
+      border-radius: 20px;
+      transition: width 0.3s ease;
+    }
+
+    .risk {
+      line-height: 1.8;
+      color: #ccc;
+      background-color: #101014;
+      border: 1px solid #2a2a33;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .empty-message {
+      color: #8b8b92;
+      font-family: monospace;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav>
+  <span class="nav-brand">TaskLU</span>
+  <div class="nav-links">
+    <a href="./index.html" class="nav-link">Dashboard</a>
+    <a href="./teamInsights.html" class="nav-link active">Task Insights</a>
+    <a href="./calendar.html" class="nav-link">Calendar</a>
+    <a href="./focus-mode.html" class="nav-link">Focus Mode</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>TEAM INSIGHTS</h1>
+  <div class="subtitle">scheduled item workload + deadline risk analytics</div>
+
+  <div class="card">
+
+    <!-- Member management -->
+    <div class="manual-add">
+      <input id="memberInput" placeholder="Add team member">
+      <button onclick="addMember()">Add Member</button>
+
+      <select id="removeMemberSelect">
+        <option value="">Remove Member</option>
+      </select>
+      <button onclick="removeMember()">Remove Member</button>
+    </div>
+
+    <!-- Assign, reassign, or unassign one scheduled item -->
+    <div class="manual-add">
+      <select id="itemToAssign">
+        <option value="">Select Scheduled Item</option>
+      </select>
+
+      <select id="memberToAssign">
+        <option value="">Assign/Reassign To</option>
+      </select>
+
+      <button onclick="assignSpecificItem()">Assign/Reassign</button>
+      <button onclick="unassignSpecificItem()">Unassign Item</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <select id="memberFilter" onchange="updateDashboard()">
+        <option value="all">All Members</option>
+      </select>
+
+      <select id="riskFilter" onchange="updateDashboard()">
+        <option value="all">All Scheduled Items</option>
+        <option value="overdue">Overdue</option>
+        <option value="verySoon">Very Soon</option>
+        <option value="today">Due Today</option>
+        <option value="upcoming">Upcoming</option>
+        <option value="later">Later</option>
+        <option value="unassigned">Unassigned</option>
+      </select>
+    </div>
+
+    <div class="metrics">
+      <div class="metric-box"><span>Total Members</span><strong id="totalMembers">0</strong></div>
+      <div class="metric-box"><span>Highest Workload</span><strong id="highestWorkload">0</strong></div>
+      <div class="metric-box"><span>Very Soon</span><strong id="verySoonItems">0</strong></div>
+      <div class="metric-box"><span>Due Today</span><strong id="todayItems">0</strong></div>
+      <div class="metric-box"><span>Scheduled Items</span><strong id="deadlineItems">0</strong></div>
+      <div class="metric-box"><span>Risk Level</span><strong id="riskLevel">Low</strong></div>
+    </div>
+
+    <hr>
+
+    <div class="section-title">Workload Balance</div>
+    <div id="workloadList"></div>
+
+    <hr>
+
+    <div class="section-title">Risk Breakdown</div>
+    <div class="risk" id="riskDetails"></div>
+
+  </div>
+</div>
+
+<script>
+  // Saved Team Insights data
+  let members = JSON.parse(localStorage.getItem("TaskLU_teamInsightMembers") || "[]");
+  let assignments = JSON.parse(localStorage.getItem("TaskLU_teamInsightAssignments") || "{}");
+  let hiddenItems = JSON.parse(localStorage.getItem("TaskLU_teamInsightHiddenItems") || "[]");
+
+  function saveTeamInsightData() {
+    localStorage.setItem("TaskLU_teamInsightMembers", JSON.stringify(members));
+    localStorage.setItem("TaskLU_teamInsightAssignments", JSON.stringify(assignments));
+    localStorage.setItem("TaskLU_teamInsightHiddenItems", JSON.stringify(hiddenItems));
+  }
+
+  function convertTo24Hour(timeStr) {
+    if (!timeStr) return "23:59";
+
+    if (!timeStr.includes("AM") && !timeStr.includes("PM")) {
+      return timeStr;
+    }
+
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":");
+
+    if (modifier === "PM" && hours !== "12") {
+      hours = String(parseInt(hours, 10) + 12);
+    }
+
+    if (modifier === "AM" && hours === "12") {
+      hours = "00";
+    }
+
+    return `${hours.padStart(2, "0")}:${minutes}`;
+  }
+
+  // Reads calendar data saved by calendarWidget.js
+  function getCalendarEvents() {
+    const savedData = localStorage.getItem("TaskLU_calendarEvents");
+
+    if (!savedData) return [];
+
+    try {
+      const calendarObject = JSON.parse(savedData);
+      const calendarEvents = [];
+
+      for (const date in calendarObject) {
+        calendarObject[date].forEach((event, index) => {
+          const title = event.title || "Calendar Item";
+          const time = convertTo24Hour(event.time || "23:59");
+          const itemId = `${date}-${index}-${title}-${time}`;
+
+          if (!hiddenItems.includes(itemId)) {
+            calendarEvents.push({
+              id: itemId,
+              assignee: assignments[itemId] || "",
+              title: title,
+              dueDateTime: `${date}T${time}`,
+              source: "calendar"
+            });
+          }
+        });
+      }
+
+      return calendarEvents;
+    } catch (error) {
+      console.log("Could not read calendar items.");
+      return [];
+    }
+  }
+
+  let items = getCalendarEvents();
+
+  function refreshItems() {
+    items = getCalendarEvents();
+  }
+
+  function getDisplayName(item) {
+    return item.assignee || item.title || "Unassigned";
+  }
+
+  function formatDueDateTime(dateTime) {
+    if (!dateTime) return "No scheduled time";
+
+    const dateObj = new Date(dateTime);
+
+    return dateObj.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
+
+  function hoursUntilDue(item) {
+    const now = new Date();
+    const due = new Date(item.dueDateTime);
+    return (due - now) / (1000 * 60 * 60);
+  }
+
+  function getUrgencyLevel(item) {
+    const hours = hoursUntilDue(item);
+
+    if (hours <= 0) return "Overdue";
+    if (hours <= 2) return "Very Soon";
+    if (hours <= 24) return "Due Today";
+    if (hours <= 72) return "Upcoming";
+    return "Later";
+  }
+
+  function getUrgencyClass(item) {
+    const urgency = getUrgencyLevel(item);
+
+    if (urgency === "Overdue") return "urgent-overdue";
+    if (urgency === "Very Soon") return "urgent-very-soon";
+    if (urgency === "Due Today") return "urgent-today";
+    if (urgency === "Upcoming") return "urgent-upcoming";
+    return "urgent-later";
+  }
+
+  // Updates all dropdowns with current members and calendar items
+  function populateDropdowns() {
+    refreshItems();
+
+    const memberFilter = document.getElementById("memberFilter");
+    const removeMemberSelect = document.getElementById("removeMemberSelect");
+    const memberToAssign = document.getElementById("memberToAssign");
+    const itemToAssign = document.getElementById("itemToAssign");
+
+    const currentMemberFilter = memberFilter.value;
+    const currentRemoveMember = removeMemberSelect.value;
+    const currentAssignMember = memberToAssign.value;
+    const currentItem = itemToAssign.value;
+
+    memberFilter.innerHTML = `<option value="all">All Members</option>`;
+    removeMemberSelect.innerHTML = `<option value="">Remove Member</option>`;
+    memberToAssign.innerHTML = `<option value="">Assign/Reassign To</option>`;
+    itemToAssign.innerHTML = `<option value="">Select Scheduled Item</option>`;
+
+    members.forEach(member => {
+      [memberFilter, removeMemberSelect, memberToAssign].forEach(select => {
+        const option = document.createElement("option");
+        option.value = member;
+        option.textContent = member;
+        select.appendChild(option);
+      });
+    });
+
+    items.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = `${item.title} — ${formatDueDateTime(item.dueDateTime)}`;
+      itemToAssign.appendChild(option);
+    });
+
+    memberFilter.value = currentMemberFilter;
+    removeMemberSelect.value = currentRemoveMember;
+    memberToAssign.value = currentAssignMember;
+    itemToAssign.value = currentItem;
+  }
+
+  function addMember() {
+    const input = document.getElementById("memberInput");
+    const name = input.value.trim();
+
+    if (!name) {
+      alert("Please enter a member name.");
+      return;
+    }
+
+    if (!members.includes(name)) {
+      members.push(name);
+    }
+
+    input.value = "";
+    saveTeamInsightData();
+    populateDropdowns();
+    updateDashboard();
+  }
+
+  function removeMember() {
+    const selectedMember = document.getElementById("removeMemberSelect").value;
+
+    if (!selectedMember) {
+      alert("Please select a member to remove.");
+      return;
+    }
+
+    if (!confirm(`Remove ${selectedMember}? Their assigned items will become unassigned.`)) return;
+
+    members = members.filter(member => member !== selectedMember);
+
+    Object.keys(assignments).forEach(itemId => {
+      if (assignments[itemId] === selectedMember) {
+        delete assignments[itemId];
+      }
+    });
+
+    saveTeamInsightData();
+    populateDropdowns();
+    updateDashboard();
+  }
+
+  function assignSpecificItem() {
+    const selectedItemId = document.getElementById("itemToAssign").value;
+    const selectedMember = document.getElementById("memberToAssign").value;
+
+    if (!selectedItemId || !selectedMember) {
+      alert("Please select both an item and a member.");
+      return;
+    }
+
+    assignments[selectedItemId] = selectedMember;
+
+    saveTeamInsightData();
+    refreshItems();
+    populateDropdowns();
+    updateDashboard();
+  }
+
+  function unassignSpecificItem() {
+    const selectedItemId = document.getElementById("itemToAssign").value;
+
+    if (!selectedItemId) {
+      alert("Please select an item to unassign.");
+      return;
+    }
+
+    delete assignments[selectedItemId];
+
+    saveTeamInsightData();
+    refreshItems();
+    populateDropdowns();
+    updateDashboard();
+  }
+
+  function deleteGroup(groupName) {
+    if (!confirm(`Remove ${groupName} from Team Insights?`)) return;
+
+    items.forEach(item => {
+      if (getDisplayName(item) === groupName) {
+        hiddenItems.push(item.id);
+        delete assignments[item.id];
+      }
+    });
+
+    members = members.filter(member => member !== groupName);
+
+    saveTeamInsightData();
+    refreshItems();
+    populateDropdowns();
+    updateDashboard();
+  }
+
+  function getFilteredItems() {
+    const memberFilter = document.getElementById("memberFilter").value;
+    const riskFilter = document.getElementById("riskFilter").value;
+
+    return items.filter(item => {
+      const displayName = getDisplayName(item);
+      const urgency = getUrgencyLevel(item);
+
+      const matchesMember = memberFilter === "all" || displayName === memberFilter;
+
+      let matchesRisk = true;
+
+      if (riskFilter === "overdue") matchesRisk = urgency === "Overdue";
+      else if (riskFilter === "verySoon") matchesRisk = urgency === "Very Soon";
+      else if (riskFilter === "today") matchesRisk = urgency === "Due Today";
+      else if (riskFilter === "upcoming") matchesRisk = urgency === "Upcoming";
+      else if (riskFilter === "later") matchesRisk = urgency === "Later";
+      else if (riskFilter === "unassigned") matchesRisk = !item.assignee;
+
+      return matchesMember && matchesRisk;
+    });
+  }
+
+  function updateDashboard() {
+    refreshItems();
+
+    const filteredItems = getFilteredItems();
+
+    const workload = {};
+    let overdue = 0;
+    let verySoon = 0;
+    let today = 0;
+    let upcoming = 0;
+    let later = 0;
+    let unassigned = 0;
+    let scheduledItems = 0;
+
+    filteredItems.forEach(item => {
+      const name = getDisplayName(item);
+      const urgency = getUrgencyLevel(item);
+
+      workload[name] = (workload[name] || 0) + 1;
+
+      if (urgency === "Overdue") overdue++;
+      if (urgency === "Very Soon") verySoon++;
+      if (urgency === "Due Today") today++;
+      if (urgency === "Upcoming") upcoming++;
+      if (urgency === "Later") later++;
+      if (!item.assignee) unassigned++;
+      scheduledItems++;
+    });
+
+    const workloadValues = Object.values(workload);
+    const highest = workloadValues.length === 0 ? 0 : Math.max(...workloadValues);
+
+    document.getElementById("totalMembers").textContent = members.length;
+    document.getElementById("highestWorkload").textContent = highest;
+    document.getElementById("verySoonItems").textContent = verySoon;
+    document.getElementById("todayItems").textContent = today;
+    document.getElementById("deadlineItems").textContent = scheduledItems;
+
+    let risk = "Low";
+
+    if (overdue >= 1 || verySoon >= 1 || unassigned >= 3) {
+      risk = "High";
+    } else if (today >= 1 || upcoming >= 2 || unassigned >= 1) {
+      risk = "Medium";
+    }
+
+    const riskLevel = document.getElementById("riskLevel");
+    riskLevel.textContent = risk;
+    riskLevel.className = "";
+
+    if (risk === "High") riskLevel.classList.add("risk-high");
+    else if (risk === "Medium") riskLevel.classList.add("risk-medium");
+    else riskLevel.classList.add("risk-low");
+
+    renderWorkload(workload, highest, filteredItems);
+    renderRiskDetails(overdue, verySoon, today, upcoming, later, unassigned, scheduledItems, risk);
+  }
+
+  function renderWorkload(workload, highest, filteredItems) {
+    const list = document.getElementById("workloadList");
+    list.innerHTML = "";
+
+    if (Object.keys(workload).length === 0) {
+      list.innerHTML = `<div class="empty-message">No scheduled item data yet. Add an item in the calendar to get started.</div>`;
+      return;
+    }
+
+    for (let group in workload) {
+      const count = workload[group];
+      const width = highest === 0 ? 0 : (count / highest) * 100;
+      const groupItems = filteredItems.filter(item => getDisplayName(item) === group);
+
+      const div = document.createElement("div");
+      div.className = "workload-item";
+
+      div.innerHTML = `
+        <div class="workload-row">
+          <strong>${group}</strong>
+          <span>${count} item(s)</span>
+          <button class="delete-btn" onclick="deleteGroup('${group}')">Delete</button>
+        </div>
+
+        ${groupItems.map(item => `
+          <div class="deadline-detail">
+            ${item.title} — Scheduled: ${formatDueDateTime(item.dueDateTime)}
+            <span class="${getUrgencyClass(item)}">(${getUrgencyLevel(item)})</span>
+          </div>
+        `).join("")}
+
+        <div class="bar-container">
+          <div class="bar" style="width: ${width}%"></div>
+        </div>
+      `;
+
+      list.appendChild(div);
+    }
+  }
+
+  function renderRiskDetails(overdue, verySoon, today, upcoming, later, unassigned, scheduledItems, risk) {
+    document.getElementById("riskDetails").innerHTML = `
+      <div>Risk Level: <strong>${risk}</strong></div>
+      <div>Overdue items: ${overdue}</div>
+      <div>Very soon items (≤2h): ${verySoon}</div>
+      <div>Due today items (≤24h): ${today}</div>
+      <div>Upcoming items (≤3 days): ${upcoming}</div>
+      <div>Later items (&gt;3 days): ${later}</div>
+      <div>Unassigned items: ${unassigned}</div>
+      <div>Total scheduled items included: ${scheduledItems}</div>
+    `;
+  }
+
+  populateDropdowns();
+  updateDashboard();
+</script>
+
+</body>
+</html>
