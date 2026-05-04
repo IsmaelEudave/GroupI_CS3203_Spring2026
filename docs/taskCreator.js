@@ -227,6 +227,27 @@ export function initTaskCreator(containerId) {
   });
 
   document.getElementById('tc-clear-btn').addEventListener('click', clearForm);
+
+  // Handle Imported Tasks
+  const handleImportTC = (task) => {
+    if (tasks.length >= MAX_TASKS) return;
+    tasks.unshift({
+      id: Date.now() + Math.random(),
+      title: task.title || task.text || "Imported Task",
+      date: task.date || dateInput.value,
+      time: task.time || "",
+      endTime: task.endTime || "",
+      category: task.category || "Task",
+      priority: task.priority || "medium",
+      notes: task.notes || task.description || ""
+    });
+    renderTasks();
+  };
+  window.addEventListener('taskImported', (e) => handleImportTC(e.detail));
+  if (window.__IMPORTED_TASK && !window.__IMPORTED_TASK_HANDLED_TC) {
+    window.__IMPORTED_TASK_HANDLED_TC = true;
+    handleImportTC(window.__IMPORTED_TASK);
+  }
 }
 
 // Automatically start the feature and place it in the right box
