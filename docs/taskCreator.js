@@ -41,6 +41,9 @@ const taskCreatorCSS = `
   .tc-container .task-btn.share { font-size: 14px; margin-top: 1px; }
   .tc-container .task-btn.share:hover { color: #e8b84b; }
   .tc-container .empty { font-size: 13px; color: #888; text-align: center; padding: 1rem 0; }
+  .tc-container .task-count { font-size: 12px; color: #888; float: right; font-weight: 400; }
+  .tc-container .task-count.at-limit { color: #E24B4A; }
+  .tc-container .limit-msg { font-size: 12px; color: #E24B4A; margin-top: 6px; display: none; }
 `;
 
 // 2. ISOLATED HTML
@@ -64,16 +67,8 @@ const taskCreatorHTML = `
       </div>
       <div class="row">
         <div class="field">
-          <label>Duration</label>
-          <select id="tc-duration">
-            <option value="15">15 min</option>
-            <option value="30">30 min</option>
-            <option value="45">45 min</option>
-            <option value="60" selected>1 hr</option>
-            <option value="90">1.5 hr</option>
-            <option value="120">2 hr</option>
-            <option value="all-day">All day</option>
-          </select>
+          <label>End time</label>
+          <input type="time" id="tc-endTime">
         </div>
         <div class="field">
           <label>Category</label>
@@ -104,8 +99,9 @@ const taskCreatorHTML = `
       </div>
 
       <div class="task-list" id="tc-taskList">
-        <h3>Upcoming tasks</h3>
+        <h3>Upcoming tasks <span class="task-count" id="tc-taskCount">0 / 100</span></h3>
         <div id="tc-tasks"><p class="empty">No tasks yet</p></div>
+        <p class="limit-msg" id="tc-limitMsg">Task limit reached (100). Remove a task to add a new one.</p>
       </div>
     </div>
   </div>
@@ -123,15 +119,16 @@ export function initTaskCreator(containerId) {
   container.innerHTML = taskCreatorHTML;
 
   // Setup Variables
+  const MAX_TASKS = 100;
   let priority = 'medium';
   let tasks = [];
-  const today = new Date().toISOString().split('T');
+  const today = new Date().toISOString().split('T')[0];
   
   // DOM Elements
   const titleInput = document.getElementById('tc-title');
   const dateInput = document.getElementById('tc-date');
   const timeInput = document.getElementById('tc-time');
-  const durationSelect = document.getElementById('tc-duration');
+  const endTimeInput = document.getElementById('tc-endTime');
   const categorySelect = document.getElementById('tc-category');
   const notesInput = document.getElementById('tc-notes');
   const tasksDiv = document.getElementById('tc-tasks');
@@ -147,13 +144,23 @@ export function initTaskCreator(containerId) {
   }
 
   function renderTasks() {
+    const atLimit = tasks.length >= MAX_TASKS;
+    const addBtn = document.getElementById('tc-add-btn');
+    const limitMsg = document.getElementById('tc-limitMsg');
+    const countEl = document.getElementById('tc-taskCount');
+    countEl.textContent = `${tasks.length} / ${MAX_TASKS}`;
+    countEl.classList.toggle('at-limit', atLimit);
+    addBtn.disabled = atLimit;
+    addBtn.style.opacity = atLimit ? '0.45' : '';
+    addBtn.style.cursor = atLimit ? 'not-allowed' : '';
+    limitMsg.style.display = atLimit ? 'block' : 'none';
     if (!tasks.length) { tasksDiv.innerHTML = '<p class="empty">No tasks yet</p>'; return; }
     tasksDiv.innerHTML = tasks.map(t => `
       <div class="task-item">
         <div class="task-dot dot-${t.priority}"></div>
         <div class="task-info">
           <div class="task-title">${t.title}<span class="task-badge badge-${t.priority}">${t.priority}</span></div>
-          <div class="task-meta">${t.category}${t.date ? ' &middot; ' + formatDate(t.date) : ''}${t.time ? ' at ' + t.time : ''}${' &middot; ' + formatDur(t.duration)}${t.notes ? ' &middot; ' + t.notes.substring(0,40) + (t.notes.length > 40 ? '&hellip;' : '') : ''}</div>
+          <div class="task-meta">${t.category}${t.date ? ' &middot; ' + formatDate(t.date) : ''}${t.time ? ' &middot; ' + t.time : ''}${t.endTime ? '&ndash;' + t.endTime : ''}${t.notes ? ' &middot; ' + t.notes.substring(0,40) + (t.notes.length > 40 ? '&hellip;' : '') : ''}</div>
         </div>
         <div class="task-actions">
           <button class="task-btn share" data-id="${t.id}" title="Share task">&rarr;</button>
@@ -190,7 +197,7 @@ export function initTaskCreator(containerId) {
     dateInput.value = today;
     timeInput.value = '';
     notesInput.value = '';
-    durationSelect.value = '60';
+    endTimeInput.value = '';
     categorySelect.value = 'Meeting';
     setPriority('medium', container.querySelector('.priority-btn.medium'));
   }
@@ -202,23 +209,18 @@ export function initTaskCreator(containerId) {
     return `${months[+m-1]} ${+day}`;
   }
 
-  function formatDur(d) {
-    if (d === 'all-day') return 'All day';
-    const n = +d;
-    return n < 60 ? `${n}m` : n === 60 ? '1 hr' : `${n/60} hr`;
-  }
-
   // Event Listeners
   priorityBtns.forEach(btn => {
     btn.addEventListener('click', (e) => setPriority(e.target.dataset.priority, e.target));
   });
 
   document.getElementById('tc-add-btn').addEventListener('click', () => {
+    if (tasks.length >= MAX_TASKS) return;
     const title = titleInput.value.trim();
     if (!title) { titleInput.focus(); return; }
     tasks.unshift({ 
-      id: Date.now(), title, date: dateInput.value, time: timeInput.value, 
-      duration: durationSelect.value, category: categorySelect.value, priority, notes: notesInput.value.trim() 
+      id: Date.now(), title, date: dateInput.value, time: timeInput.value,
+      endTime: endTimeInput.value, category: categorySelect.value, priority, notes: notesInput.value.trim() 
     });
     renderTasks();
     clearForm();

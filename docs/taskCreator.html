@@ -1,0 +1,177 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1.5rem 0;max-width:560px}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:1.5rem}
+.field{margin-bottom:1rem}
+label{display:block;font-size:13px;color:var(--color-text-secondary);margin-bottom:6px}
+input,select,textarea{width:100%;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-size:14px;font-family:var(--font-sans);color:var(--color-text-primary);background:var(--color-background-primary)}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.priority-group{display:flex;gap:8px}
+.priority-btn{flex:1;padding:7px 0;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all 0.15s}
+.priority-btn.low.active{background:#EAF3DE;border-color:#639922;color:#3B6D11}
+.priority-btn.medium.active{background:#FAEEDA;border-color:#BA7517;color:#854F0B}
+.priority-btn.high.active{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D}
+.actions{display:flex;gap:10px;margin-top:1.5rem}
+.btn-primary{flex:1;padding:9px 0;font-size:14px;font-weight:500;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;background:var(--color-text-primary);color:var(--color-background-primary)}
+.btn-secondary{padding:9px 16px;font-size:14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;background:transparent;color:var(--color-text-primary)}
+.task-list{margin-top:1.5rem;border-top:0.5px solid var(--color-border-tertiary);padding-top:1.5rem}
+.task-list h3{font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-bottom:12px}
+.task-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.task-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dot-low{background:#639922}.dot-medium{background:#BA7517}.dot-high{background:#E24B4A}
+.task-info{flex:1;min-width:0}
+.task-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.task-meta{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.task-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);margin-left:8px}
+.badge-low{background:#EAF3DE;color:#3B6D11}
+.badge-medium{background:#FAEEDA;color:#854F0B}
+.badge-high{background:#FCEBEB;color:#A32D2D}
+.remove-btn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:16px;padding:0 2px;line-height:1}
+.empty{font-size:13px;color:var(--color-text-secondary);text-align:center;padding:1rem 0}
+.limit-msg{font-size:12px;color:#E24B4A;margin-top:6px;display:none}
+.task-count{font-size:12px;color:var(--color-text-secondary);float:right;font-weight:400}
+.task-count.at-limit{color:#E24B4A}
+</style>
+
+<div class="wrap">
+  <h2>New task</h2>
+  <div class="field">
+    <label>Title</label>
+    <input type="text" id="title" placeholder="e.g. Team standup, Review PR...">
+  </div>
+  <div class="row">
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="date">
+    </div>
+    <div class="field">
+      <label>Time</label>
+      <input type="time" id="time">
+    </div>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label>End time</label>
+      <input type="time" id="endTime">
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="category">
+        <option value="Meeting">Meeting</option>
+        <option value="Task">Task</option>
+        <option value="Reminder">Reminder</option>
+        <option value="Event">Event</option>
+        <option value="Deadline">Deadline</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Priority</label>
+    <div class="priority-group">
+      <button class="priority-btn low" onclick="setPriority('low',this)">Low</button>
+      <button class="priority-btn medium active" onclick="setPriority('medium',this)">Medium</button>
+      <button class="priority-btn high" onclick="setPriority('high',this)">High</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>Notes</label>
+    <textarea id="notes" placeholder="Optional details..."></textarea>
+  </div>
+  <div class="actions">
+    <button class="btn-secondary" onclick="clearForm()">Clear</button>
+    <button class="btn-primary" id="addBtn" onclick="addTask()">Add task</button>
+  </div>
+  <p class="limit-msg" id="limitMsg">Task limit reached (100). Remove a task to add a new one.</p>
+
+  <div class="task-list" id="taskList">
+    <h3>Upcoming tasks <span class="task-count" id="taskCount">0 / 100</span></h3>
+    <div id="tasks"><p class="empty">No tasks yet</p></div>
+  </div>
+</div>
+
+<script>
+//the above html was generated by claude for temp use.
+const MAX_TASKS = 100; // maximum number of tasks allowed to prevent performance issues
+let priority = 'medium';
+let tasks = [];
+
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('date').value = today;
+renderTasks();
+// functions justs sets the priority of the task and updates the button styles(p is the priority value and btn is the button element that was clicked)
+function setPriority(p, btn) 
+{
+  priority = p;
+  document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+// adds a new task to the tasks array and then calls renderTasks to update the task list display. It also clears the form after adding the task.
+function addTask() {
+  if (tasks.length >= MAX_TASKS) return;
+  const title = document.getElementById('title').value.trim();
+  if (!title) { document.getElementById('title').focus(); return; }
+  const date = document.getElementById('date').value;
+  const time = document.getElementById('time').value;
+  const endTime = document.getElementById('endTime').value;
+  const category = document.getElementById('category').value;
+  const notes = document.getElementById('notes').value.trim();
+  tasks.unshift({ id: Date.now(), title, date, time, endTime, category, priority, notes });
+  renderTasks();
+  clearForm();
+}
+//clears the form inputs and resets them to their default values. It also sets the priority back to 'medium' and updates the button styles accordingly.
+function clearForm() {
+  document.getElementById('title').value = '';
+  document.getElementById('date').value = today;
+  document.getElementById('time').value = '';
+  document.getElementById('notes').value = '';
+  document.getElementById('endTime').value = '';
+  document.getElementById('category').value = 'Meeting';
+  setPriority('medium', document.querySelector('.priority-btn.medium'));
+}
+//removes the task duh, id is the specific task
+function removeTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  renderTasks();
+}
+//prevents HTML injection by escaping special characters in the task title and notes before rendering them on the page.
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+//formats the date from YYYY-MM-DD to a more readable format like "Jan 1"
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[+m-1]} ${+day}`;
+}
+//renders the HTML, might need to remove this
+function renderTasks() {
+  const el = document.getElementById('tasks');
+  const atLimit = tasks.length >= MAX_TASKS;
+  const addBtn = document.getElementById('addBtn');
+  const limitMsg = document.getElementById('limitMsg');
+  const countEl = document.getElementById('taskCount');
+  countEl.textContent = `${tasks.length} / ${MAX_TASKS}`;
+  countEl.classList.toggle('at-limit', atLimit);
+  addBtn.disabled = atLimit;
+  addBtn.style.opacity = atLimit ? '0.45' : '';
+  addBtn.style.cursor = atLimit ? 'not-allowed' : '';
+  limitMsg.style.display = atLimit ? 'block' : 'none';
+  if (!tasks.length) { el.innerHTML = '<p class="empty">No tasks yet</p>'; return; }
+  el.innerHTML = tasks.map(t => `
+    <div class="task-item">
+      <div class="task-dot dot-${t.priority}"></div>
+      <div class="task-info">
+        <div class="task-title">${escapeHtml(t.title)}<span class="task-badge badge-${t.priority}">${t.priority}</span></div>
+        <div class="task-meta">${t.category}${t.date ? ' · ' + formatDate(t.date) : ''}${t.time ? ' · ' + t.time : ''}${t.endTime ? '–' + t.endTime : ''}${t.notes ? ' · ' + escapeHtml(t.notes).substring(0,40) + (t.notes.length > 40 ? '…' : '') : ''}</div>
+      </div>
+      <button class="remove-btn" onclick="removeTask(${t.id})">×</button>
+    </div>
+  `).join('');
+}
+</script>

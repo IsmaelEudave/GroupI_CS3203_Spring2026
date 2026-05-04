@@ -72,6 +72,7 @@
     .dashboard-grid {
       display: grid;
       grid-template-columns: 380px 1fr;
+      grid-template-rows: 1fr auto;
       gap: 20px;
       padding: 20px;
       flex: 1;
@@ -86,11 +87,19 @@
       overflow-y: auto;
     }
 
+    #feature-task-creator { grid-column: 1; grid-row: 1 / -1; }
+    #feature-kanban       { grid-column: 2; grid-row: 1; }
+    #feature-ai-overview  { grid-column: 2; grid-row: 2; padding: 14px 18px; }
+
     @media (max-width: 900px) {
       .dashboard-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
         overflow-y: auto;
       }
+      #feature-task-creator,
+      #feature-kanban,
+      #feature-ai-overview { grid-column: auto; grid-row: auto; }
     }
   </style>
 </head>
@@ -106,12 +115,14 @@
   </nav>
 
   <div class="dashboard-grid">
+    <div id="feature-ai-overview" class="feature-container feature-ai"></div>
     <div id="feature-task-creator" class="feature-container"></div>
     <div id="feature-kanban" class="feature-container"></div>
   </div>
 
   <script type="module" src="./taskCreator.js"></script>
   <script type="module" src="./main.js"></script>
+  <script type="module" src="./aiOverview.js"></script>
 
 </body>
 </html>
