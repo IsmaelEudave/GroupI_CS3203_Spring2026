@@ -342,6 +342,47 @@ const STYLES = `
     padding: 24px 0;
     font-family: 'DM Mono', monospace;
   }
+
+  /* Reliability UI */
+  .kb-degraded-banner {
+    background: #2e2610;
+    border: 1px solid #5a4a1a;
+    color: #e8b84b;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+
+  .kb-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    z-index: 1100;
+    max-width: 360px;
+    animation: kb-toast-in 0.2s ease-out;
+  }
+  .kb-toast-error   { background: #3d1a1a; border: 1px solid #6a2a2a; color: #f0a0a0; }
+  .kb-toast-warn    { background: #2e2610; border: 1px solid #5a4a1a; color: #e8b84b; }
+  .kb-toast-success { background: #112918; border: 1px solid #1f4a2e; color: #6cd197; }
+
+  @keyframes kb-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .kb-card-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 `;
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -371,6 +412,85 @@ const today = () => {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
+// ─── Input Validation Helpers ───────────────────────────────────────────────
+// Fault Avoidance: strict validation prevents bad data from reaching the API
+const isValidEmail = (email) => {
+  if (!email || typeof email !== "string") return false;
+  const trimmed = email.trim();
+  if (trimmed === "" || trimmed.length > 254) return false;
+  // RFC 5322 simplified pattern
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+};
+
+// ─── Reliability Monitor (Dependency Monitoring & SLA Alignment) ────────────
+// Tracks communicationService health to align with the 99.5–99.9% SLA target.
+// Acts as an in-memory circuit breaker so the UI degrades gracefully when the
+// dependency is failing, instead of repeatedly hitting a broken service.
+const ReliabilityMonitor = {
+  metrics: {
+    attempts: 0,
+    successes: 0,
+    failures: 0,
+    consecutiveFailures: 0,
+    totalLatencyMs: 0,
+    lastFailureAt: null,
+    lastErrorMessage: null,
+  },
+
+  // Circuit breaker config
+  FAILURE_THRESHOLD: 3,        // Open circuit after N consecutive failures
+  COOLDOWN_MS: 60_000,         // Probe the service again after 1 minute
+  SLA_TARGET: 0.995,           // 99.5% availability target
+
+  recordAttempt() {
+    this.metrics.attempts++;
+  },
+
+  recordSuccess(latencyMs) {
+    this.metrics.successes++;
+    this.metrics.consecutiveFailures = 0;
+    this.metrics.totalLatencyMs += latencyMs;
+  },
+
+  recordFailure(errorMessage, latencyMs = 0) {
+    this.metrics.failures++;
+    this.metrics.consecutiveFailures++;
+    this.metrics.lastFailureAt = Date.now();
+    this.metrics.lastErrorMessage = errorMessage;
+    this.metrics.totalLatencyMs += latencyMs;
+    // In production this hook forwards to Sentry / Datadog RUM
+    console.error(
+      `[SLA Monitor] communicationService failure #${this.metrics.failures}: ${errorMessage}`
+    );
+  },
+
+  getAvailability() {
+    if (this.metrics.attempts === 0) return 1.0;
+    return this.metrics.successes / this.metrics.attempts;
+  },
+
+  getAverageLatency() {
+    if (this.metrics.attempts === 0) return 0;
+    return Math.round(this.metrics.totalLatencyMs / this.metrics.attempts);
+  },
+
+  // Returns true when the share feature should be disabled (circuit "open").
+  // Auto-resets after COOLDOWN_MS so the system can retry the dependency.
+  isCircuitOpen() {
+    if (this.metrics.consecutiveFailures < this.FAILURE_THRESHOLD) return false;
+    const elapsed = Date.now() - (this.metrics.lastFailureAt || 0);
+    if (elapsed > this.COOLDOWN_MS) {
+      this.metrics.consecutiveFailures = 0;
+      return false;
+    }
+    return true;
+  },
+
+  isBelowSLA() {
+    return this.metrics.attempts >= 5 && this.getAvailability() < this.SLA_TARGET;
+  },
+};
+
 // ─── KanbanBoard Component ──────────────────────────────────────────────────
 export default function KanbanBoard() {
   const [tasks,      setTasks]      = useState(INITIAL_TASKS);
@@ -378,6 +498,17 @@ export default function KanbanBoard() {
   const [defaultCol, setDefaultCol] = useState("todo");
   const [dragId,     setDragId]     = useState(null);
   const [overCol,    setOverCol]    = useState(null);
+
+  // ── Reliability UI state ──
+  // toast: transient user-facing message (replaces silent console.error)
+  // serviceDegraded: persistent banner when SLA is breached or circuit is open
+  const [toast,           setToast]           = useState(null);
+  const [serviceDegraded, setServiceDegraded] = useState(false);
+
+  const showToast = (message, type = "error", durationMs = 4000) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), durationMs);
+  };
   // Handle Imported Tasks
   useEffect(() => {
     const loadImportedTasks = () => {
@@ -497,6 +628,18 @@ export default function KanbanBoard() {
       }, "+ New Task")
     ),
 
+    // Degradation Banner (shown when communicationService SLA is breached)
+    serviceDegraded
+      ? React.createElement("div", { className: "kb-degraded-banner" },
+          "\u26A0 Sharing features are temporarily degraded \u00B7 ",
+          "Availability: ",
+          (ReliabilityMonitor.getAvailability() * 100).toFixed(1),
+          "% \u00B7 Avg latency: ",
+          ReliabilityMonitor.getAverageLatency(),
+          "ms"
+        )
+      : null,
+
     // Board
     React.createElement("div", { className: "kb-board" },
       COLUMNS.map((col) => {
@@ -537,10 +680,100 @@ export default function KanbanBoard() {
                   React.createElement("div", { className: "kb-card-actions" },
                     React.createElement("button", {
                       className: "kb-card-btn share",
-                      onClick: () => communicationService.promptShare(task.title, (email) => {
-                        communicationService.shareTaskToEmail(task, email);
-                      }),
-                      title: "Share task",
+                      // ─── Reliability Block ───────────────────────────────
+                      // Implements 4 reliability principles for the share flow:
+                      //   1. Fault Avoidance & Input Validation
+                      //   2. Exception Handling & Failure Management
+                      //   3. Return Value Verification (CWE-252 mitigation)
+                      //   4. Dependency Monitoring & SLA Alignment
+                      // ─────────────────────────────────────────────────────
+                      disabled: ReliabilityMonitor.isCircuitOpen(),
+                      onClick: () => {
+                        const startTime = performance.now();
+
+                        // [4] Dependency Monitoring: short-circuit if the
+                        // service has been failing repeatedly (degraded mode).
+                        if (ReliabilityMonitor.isCircuitOpen()) {
+                          setServiceDegraded(true);
+                          showToast(
+                            "Sharing is temporarily unavailable. Please try again in a minute.",
+                            "warn"
+                          );
+                          return;
+                        }
+
+                        ReliabilityMonitor.recordAttempt();
+
+                        try {
+                          // [1] Null Pointer Check: verify dependency exists
+                          if (!communicationService ||
+                              typeof communicationService.promptShare !== "function") {
+                            throw new Error("communicationService is unavailable.");
+                          }
+
+                          communicationService.promptShare(task.title, (email) => {
+                            const latency = performance.now() - startTime;
+                            try {
+                              // [1] Input Validation: stricter than non-empty —
+                              // also rejects malformed addresses before the API call.
+                              if (email == null || email.trim() === "") {
+                                console.warn("Share cancelled by user.");
+                                return; // user cancelled; not a failure
+                              }
+                              if (!isValidEmail(email)) {
+                                showToast("That email address looks invalid.", "warn");
+                                return; // bad input, not a service failure
+                              }
+
+                              if (typeof communicationService.shareTaskToEmail !== "function") {
+                                throw new Error("shareTaskToEmail method is unavailable.");
+                              }
+
+                              // [3] Return Value Verification: do not assume success
+                              const shareResult =
+                                communicationService.shareTaskToEmail(task, email);
+
+                              if (shareResult === false) {
+                                throw new Error("Sharing service rejected the request.");
+                              }
+
+                              // [4] SLA Alignment: record the successful call
+                              ReliabilityMonitor.recordSuccess(latency);
+                              if (ReliabilityMonitor.metrics.consecutiveFailures === 0) {
+                                setServiceDegraded(false);
+                              }
+                              showToast(`Shared "${task.title}" with ${email.trim()}`, "success");
+                            } catch (innerError) {
+                              // [2] Exception Handling: catch inner errors and
+                              // [4] log them to the SLA monitor (graceful degradation)
+                              ReliabilityMonitor.recordFailure(innerError.message, latency);
+                              showToast(
+                                "Couldn't share that task — the service didn't respond correctly.",
+                                "error"
+                              );
+                              if (ReliabilityMonitor.isCircuitOpen() ||
+                                  ReliabilityMonitor.isBelowSLA()) {
+                                setServiceDegraded(true);
+                              }
+                            }
+                          });
+                        } catch (outerError) {
+                          // [2] Exception Handling: catch setup-time failures
+                          const latency = performance.now() - startTime;
+                          ReliabilityMonitor.recordFailure(outerError.message, latency);
+                          showToast(
+                            "Sharing is unavailable right now. We're looking into it.",
+                            "error"
+                          );
+                          if (ReliabilityMonitor.isCircuitOpen() ||
+                              ReliabilityMonitor.isBelowSLA()) {
+                            setServiceDegraded(true);
+                          }
+                        }
+                      },
+                      title: ReliabilityMonitor.isCircuitOpen()
+                        ? "Sharing temporarily unavailable"
+                        : "Share task",
                     }, "\u2192"), // Right arrow
                     React.createElement("button", {
                       className: "kb-card-btn delete",
@@ -649,6 +882,13 @@ export default function KanbanBoard() {
             )
           )
         )
+      : null,
+
+    // Toast notification (user-facing feedback for share success/failure)
+    toast
+      ? React.createElement("div", {
+          className: "kb-toast kb-toast-" + toast.type,
+        }, toast.message)
       : null
   );
 }
